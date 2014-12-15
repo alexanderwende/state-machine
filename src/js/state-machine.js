@@ -54,24 +54,14 @@ class StateMachine {
         this.exitState(this.currentState.id, function () { this.enterState(stateId); }.bind(this));
     }
 
-//    transition (state) {
-//
-//        var done = function () {
-//
-//            var done = function () {
-//                this.currentState = state;
-//            }.bind(this);
-//
-//            state.enter(done);
-//
-//        }.bind(this);
-//
-//        this.currentState.exit(done);
-//    }
-
     addState (state) {
 
         this.states[state.id] = state;
+    }
+
+    removeState (state) {
+
+        delete this.states[state.id];
     }
 }
 

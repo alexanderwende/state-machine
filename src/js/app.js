@@ -51,10 +51,11 @@ import StateMachine from './state-machine';
     app.state.addState({
         id: 'home',
         route: '/',
-        enter: function (done) {
+        enter: function (params, done) {
             app.modules['home'].start(done);
+            app.modules['home'].handleEvent(params);
         },
-        exit: function (done) {
+        exit: function (params, done) {
             done();
         }
     });
@@ -62,10 +63,10 @@ import StateMachine from './state-machine';
     app.state.addState({
         id: 'about',
         route: '/about',
-        enter: function (done) {
+        enter: function (params, done) {
             app.modules['about'].start(done);
         },
-        exit: function (done) {
+        exit: function (params, done) {
             done();
         }
     });
