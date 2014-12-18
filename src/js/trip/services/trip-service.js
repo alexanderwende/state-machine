@@ -1,5 +1,7 @@
 var TripService = {
 
+    _cache: new Map,
+
     getTrips: function (userId, callback) {
 
         return new Promise(function (resolve, reject) {
@@ -12,7 +14,15 @@ var TripService = {
 
                 if (this.status === 200 || this.status === 304) {
 
-                    resolve(JSON.parse(this.responseText).trips);
+                    var trips = JSON.parse(this.responseText).trips;
+
+                    trips.forEach(function (trip) {
+                        TripService._cache.set(trip.id, trip);
+                    });
+
+                    resolve(trips);
+
+                    console.log(TripService);
                 }
                 else {
 

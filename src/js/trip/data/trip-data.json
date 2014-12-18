@@ -1,18 +1,24 @@
 {
     "trips": [
         {
+            "id": 0,
+            "userId": 0,
             "name": "World Trip",
             "startDate": "2012-11-01",
             "endDate": "2013-02-01",
             "locations": ["China", "Thailand", "Indonesia", "Japan"]
         },
         {
+            "id": 1,
+            "userId": 0,
             "name": "Budapest Trip",
             "startDate": "2014-04-11",
             "endDate": "2014-04-13",
             "locations": ["Hungary"]
         },
         {
+            "id": 2,
+            "userId": 0,
             "name": "Barcelona Trip",
             "startDate": "2014-07-09",
             "endDate": "2014-07-16",
