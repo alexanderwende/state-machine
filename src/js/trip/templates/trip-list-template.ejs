@@ -1,9 +1,10 @@
+<h1>Latest Trips</h1>
 <ul>
     <% scope.items.forEach(function (item) { %>
     <li>
         <a href="<%= item.url %>"><%= item.name %></a>
         <span class="trip-details">
-            <span class="trip-date"><%= item.date %></span>
+            <span class="trip-date"><%= item.startDate %></span>
         </span>
     </li>
     <% }); %>
