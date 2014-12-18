@@ -1,0 +1,10 @@
+<ul>
+    <% scope.items.forEach(function (item) { %>
+    <li>
+        <a href="<%= item.url %>"><%= item.name %></a>
+        <span class="trip-details">
+            <span class="trip-date"><%= item.date %></span>
+        </span>
+    </li>
+    <% }); %>
+</ul>
