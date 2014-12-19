@@ -31,7 +31,7 @@ class StateMachine {
         }
     }
 
-    enterState (stateId) {
+    enterState (stateId, params) {
 
         var state = this.states[stateId];
 
@@ -39,7 +39,7 @@ class StateMachine {
             this.currentState = state;
         }.bind(this);
 
-        state.enter(done);
+        state.enter(params, done);
     }
 
     exitState (stateId, done) {
@@ -49,9 +49,14 @@ class StateMachine {
         state.exit(done);
     }
 
-    transition (stateId) {
+    transition (stateId, params) {
 
-        this.exitState(this.currentState.id, function () { this.enterState(stateId); }.bind(this));
+        if (!this.currentState) {
+            this.enterState(stateId, params);
+        }
+        else {
+            this.exitState(this.currentState.id, function () { this.enterState(stateId, params); }.bind(this));
+        }
     }
 
     addState (state) {

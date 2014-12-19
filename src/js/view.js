@@ -8,6 +8,7 @@ export default class View {
             this.selector   = options.selector;
             this.scope      = options.scope;
             this.template   = options.template;
+            this.module     = options.module;
         }
     }
 
@@ -24,5 +25,9 @@ export default class View {
     render () {
 
         this.element.innerHTML = this.getTemplate()(this.getScope());
+
+        this.onRender();
     }
+
+    onRender () {}
 }

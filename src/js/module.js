@@ -9,17 +9,42 @@ export default class Module {
         }
     }
 
-    start () {
+    start (callback) {
 
         if (this.isStarted) { return; }
 
         this.isStarted = true;
+
+        this.onStart(callback);
     }
 
-    stop () {
+    onStart (callback) {
+
+        if (typeof callback === 'function') {
+            callback(this);
+        }
+    }
+
+    stop (callback) {
 
         if (!this.isStarted) { return; }
 
         this.isStarted = false;
+
+        this.onStop(callback);
+    }
+
+    onStop () {
+
+        if (typeof callback === 'function') {
+            callback(this);
+        }
+    }
+
+    destroy () {}
+
+    onDestroy () {
+
+        // implement in module
     }
 }

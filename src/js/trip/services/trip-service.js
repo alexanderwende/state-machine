@@ -21,8 +21,6 @@ var TripService = {
                     });
 
                     resolve(trips);
-
-                    console.log(TripService);
                 }
                 else {
 
@@ -37,6 +35,21 @@ var TripService = {
 
 
             xhr.send();
+        });
+    },
+
+    get: function (tripId) {
+
+        return new Promise(function (resolve, reject) {
+
+            var trip = TripService._cache.get(tripId);
+
+            if (trip) {
+                resolve(trip);
+            }
+            else {
+                reject(Error('No trip found for id ' + tripId));
+            }
         });
     }
 };

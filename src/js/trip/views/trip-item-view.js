@@ -1,7 +1,7 @@
 import View from '../../view';
-import template from '../templates/trip-list-template.ejs!tpl';
+import template from '../templates/trip-item-template.ejs!tpl';
 
-export default class TripListView extends View {
+export default class TripItemView extends View {
 
     constructor (options) {
 
@@ -10,10 +10,5 @@ export default class TripListView extends View {
         if (!this.template) {
             this.template = template;
         }
-    }
-
-    onRender () {
-
-
     }
 }
