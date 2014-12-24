@@ -1,3 +1,4 @@
+import DOM from './dom';
 import EventQueue from './event-queue';
 import StateMachine from './state-machine';
 import Application from './app/app';
@@ -5,6 +6,8 @@ import Application from './app/app';
 (function () {
 
     'use strict';
+
+    window.DOM = DOM;
 
 //    var app = {
 //

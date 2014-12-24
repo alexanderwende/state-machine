@@ -33,4 +33,13 @@ function extend (target, source, deep) {
     return target;
 }
 
-export {clone, extend};
+function toArray (source) {
+
+    var i, result = [];
+
+    for (i = result.length = source.length; i--; result[i] = source[i]);
+
+    return result;
+}
+
+export {clone, extend, toArray};
