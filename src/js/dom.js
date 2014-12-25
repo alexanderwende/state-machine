@@ -23,8 +23,6 @@
  *
  */
 
-import * as utils from './utils';
-
 class DOMQuery extends Array {
 
     /**
@@ -53,6 +51,8 @@ class DOMQuery extends Array {
 
             return new DOMQuery(selector, context);
         }
+
+        super();
 
         if (selector instanceof NodeList || selector instanceof Array) {
 
@@ -85,7 +85,7 @@ class DOMQuery extends Array {
      */
     find (selector) {
 
-        return DOMQquery(selector, this);
+        return DOMQuery(selector, this);
     }
 
     /**
@@ -151,7 +151,7 @@ class DOMQuery extends Array {
      */
     attribute (attribute, value) {
 
-        if (typeof value === "undefined") {
+        if (value === undefined) {
 
             return this.getAttribute(attribute);
         }
@@ -222,10 +222,7 @@ class DOMQuery extends Array {
             // the hasAttribute method is part of the Element interface
             if (node instanceof Element) {
 
-                if (node.hasAttribute(attribute)) {
-
-                    return true;
-                }
+                return node.hasAttribute(attribute);
             }
         }
 
@@ -291,7 +288,7 @@ class DOMQuery extends Array {
 
             if (node instanceof Element) {
 
-                nide.innerHTML = '';
+                node.innerHTML = '';
             }
             else if (node instanceof Node) {
 
@@ -306,6 +303,38 @@ class DOMQuery extends Array {
     }
 
     /**
+     * Add an event listener to an element
+     *
+     * @param {string} event
+     * @param {function} listener
+     * @param {boolean} [useCapture=false]
+     * @returns {DOMQuery}
+     */
+    on (event, listener, useCapture = false) {
+
+        for (let i = this.length; i--; this[i].addEventListener(event, listener, useCapture));
+
+        return this;
+    }
+
+    /**
+     * Remove an event listener from an element
+     *
+     * @param {string} event
+     * @param {function} listener
+     * @param {boolean} [useCapture=false]
+     * @returns {DOMQuery}
+     */
+    off (event, listener, useCapture = false) {
+
+        for (let i = this.length; i--; this[i].removeEventListener(event, listener, useCapture));
+
+        return this;
+    }
+
+    /**
+     * Query the DOM
+     *
      * @param {string} selector
      * @param {Element} context
      * @returns {DOMQuery}
@@ -320,6 +349,7 @@ class DOMQuery extends Array {
 
             for (i = 0, length = context.length; i < length; i++) {
 
+                // TODO: fix concat
                 result = result.concat(this.query(selector, context[i]));
             }
         }
@@ -335,6 +365,8 @@ class DOMQuery extends Array {
     }
 
     /**
+     * Parse an HTML string into DOM nodes
+     *
      * @param {string} html
      * @returns {DOMQuery}
      */
@@ -354,9 +386,15 @@ class DOMQuery extends Array {
         return result;
     }
 
-    static isHTML (selector) {
+    /**
+     * Check if a string is an HTML string
+     *
+     * @param {string} html
+     * @returns {boolean}
+     */
+    static isHTML (html) {
 
-        return (selector[0] === "<" && selector[selector.length - 1] === ">" && selector.length > 2);
+        return (html[0] === "<" && html[html.length - 1] === ">" && html.length > 2);
     }
 }
 
