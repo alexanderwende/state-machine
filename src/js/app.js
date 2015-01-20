@@ -7,8 +7,6 @@ import Application from './app/app';
 
     'use strict';
 
-    window.DOM = DOM;
-
 //    var app = {
 //
 //        events: new EventQueue(),
@@ -77,10 +75,61 @@ import Application from './app/app';
 //
 //    app.state.enterState('home');
 
-    window.app = new Application({
-        selector: '#app'
-    });
+    class StateMachine {
 
-    window.app.start();
+        constructor (options) {
+
+            this.states = {};
+
+            this.current = null;
+        }
+
+        transition (fromState, toState, params) {
+
+            if (fromState !== toState) {
+
+                fromState.exit();
+
+                toState.enter(params);
+            }
+        }
+    }
+
+    class Module extends StateMachine {
+
+        constructor (options) {
+
+            super(options);
+        }
+    }
+
+    class Router {
+
+        constructor (options) {}
+
+        navigate (url) {}
+    }
+
+    class App extends Module {
+
+        constructor (options) {
+
+            super(options);
+
+            this.states = {
+
+                'home': {
+                    enter: function (params) {},
+                    exit: function () {}
+                },
+
+                'about': {
+                    enter: function (params) {},
+                    exit: function () {}
+                }
+            };
+        }
+    }
+
 
 })();
