@@ -89,11 +89,15 @@ import Application from './app/app';
 
         transition (state, params) {
 
+            let states = state.split('.');
+
+            state = states.shift();
+
             if (this.current !== state) {
 
                 this.exitState(this.current);
 
-                this.enterState(state, params);
+                this.enterState(state, states, params);
             }
         }
 
@@ -104,7 +108,7 @@ import Application from './app/app';
             }
         }
 
-        enterState (state, params) {
+        enterState (state, states, params) {
 
             if (this.states[state]) {
                 this.states[state].enter(params);
