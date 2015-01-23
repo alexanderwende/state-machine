@@ -148,27 +148,26 @@ import Application from './app/app';
         constructor (options) {
 
             this.id         = options.id;
-            this.default    = options.default ? true : false;
 
-            this.data       = {};
+            this.data       = options.data || {};
 
-            this._enter     = options.enter;
-            this._exit      = options.exit;
+            this.onEnter    = options.onEnter;
+            this.onExit     = options.onExit;
         }
 
         enter (params) {
 
-            if (this._enter) {
+            if (typeof this.onEnter === 'function') {
 
-                this._enter(params);
+                this.onEnter(params);
             }
         }
 
         exit () {
 
-            if (this._exit) {
+            if (typeof this.onExit === 'function') {
 
-                this._exit();
+                this.onExit();
             }
         }
     }
@@ -310,7 +309,18 @@ import Application from './app/app';
                     },
                     exit: function () {}
                 });
+
+            this.controller = {
+
+            };
         }
+    }
+
+    class UserController {
+
+        constructor (options) {}
+
+        list () {}
     }
 
     class App extends Module {

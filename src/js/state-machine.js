@@ -1,94 +1,64 @@
+import State from './state';
+
 class StateMachine {
 
     constructor (options) {
 
         this.states = {};
-        this.currentState = null;
 
-        if (options && options.initialState) {
+        this.current = null;
+        this.default = null;
+    }
 
-            this.enterState(options.initialState);
+    state (state) {
+
+        switch (typeof state) {
+
+            case 'object':
+
+                if (!(state instanceof State)) {
+
+                    state = new State(state);
+                }
+
+                this.states[state.id] = state;
+
+                break;
+
+            case 'string':
+
+                return this.states[state];
+        }
+
+        return this;
+    }
+
+    transition (state, params) {
+
+        if (this.current !== state) {
+
+            this._exitState(this.current);
+
+            this._enterState(state, params);
         }
     }
 
-    handleEvent (event) {
+    _exitState (state) {
 
-        var state = this.currentState.handleEvent(event);
+        if (this.states[state]) {
 
-        if (state) {
-
-            this.transition(state);
+            this.states[state].exit();
         }
     }
 
-    handleInput (input) {
+    _enterState (state, params) {
 
-        var state = this.currentState.handleInput(input);
+        if (this.states[state]) {
 
-        if (state) {
+            this.states[state].enter(params);
 
-            this.transition(state);
+            this.current = state;
         }
-    }
-
-    enterState (stateId, params) {
-
-        var state = this.states[stateId];
-
-        var done = function () {
-            this.currentState = state;
-        }.bind(this);
-
-        state.enter(params, done);
-    }
-
-    exitState (stateId, done) {
-
-        var state = this.states[stateId];
-
-        state.exit(done);
-    }
-
-    transition (stateId, params) {
-
-        if (!this.currentState) {
-            this.enterState(stateId, params);
-        }
-        else {
-            this.exitState(this.currentState.id, function () { this.enterState(stateId, params); }.bind(this));
-        }
-    }
-
-    addState (state) {
-
-        this.states[state.id] = state;
-    }
-
-    removeState (state) {
-
-        delete this.states[state.id];
-    }
-}
-
-class State {
-
-    constructor (options) {
-
-        this.id = options.id;
-    }
-
-    handleEvent (event) {}
-
-    handleInput (input) {}
-
-    enter (done) {
-
-        return done();
-    }
-
-    exit (done) {
-
-        return done();
     }
 }
 
