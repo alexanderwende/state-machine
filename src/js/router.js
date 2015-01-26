@@ -1,10 +1,10 @@
-import StateMachine from './state-machine';
+import Route from './route';
 
-class Router extends StateMachine {
+class Router {
 
     constructor (options) {
 
-        super(options);
+        this.routes = {};
 
         this._onHashChange = function (event) {
             // get the new url from the hashchange event
@@ -16,11 +16,46 @@ class Router extends StateMachine {
         }.bind(this);
     }
 
-    addRoute (route) {}
+    route (route) {
 
-    removeRoute (route) {}
+        switch (typeof route) {
 
-    navigate (url, trigger) {}
+            case 'object':
+
+                if (!(route instanceof Route)) {
+
+                    route = new Route(route);
+                }
+
+                this.routes[route.id] = route;
+
+                break;
+
+            case 'string':
+
+                return this.routes[route];
+        }
+
+        return this;
+    }
+
+    navigate (route, options = {}) {
+
+        if (route in this.routes) {
+
+            this.routes[route].execute(options.params);
+        }
+        else {
+
+            for (let i in this.routes) {
+
+                if (this.routes[i].match(route)) {
+
+                    this.routes[i].execute(route);
+                }
+            }
+        }
+    }
 
     start () {
 

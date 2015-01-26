@@ -38,9 +38,9 @@ class StateMachine {
         if (this.current !== state) {
 
             this._exitState(this.current);
-
-            this._enterState(state, params);
         }
+
+        this._enterState(state, params);
     }
 
     _exitState (state) {
@@ -48,6 +48,8 @@ class StateMachine {
         if (this.states[state]) {
 
             this.states[state].exit();
+
+            this.current = null;
         }
     }
 
