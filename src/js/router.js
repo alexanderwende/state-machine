@@ -6,6 +6,8 @@ class Router {
 
         this.routes = {};
 
+        this.isStarted = false;
+
         this._onHashChange = function (event) {
             // get the new url from the hashchange event
             var match = event.newURL.match(/#(.+)$/);
@@ -61,18 +63,22 @@ class Router {
 
         if (this.isStarted) { return; }
 
-        if (window.onhashchange) {
+        if ('onhashchange' in window) {
             window.addEventListener('hashchange', this._onHashChange);
         }
+
+        this.isStarted = true;
     }
 
     stop () {
 
         if (!this.isStarted) { return; }
 
-        if (window.onhashchange) {
+        if ('onhashchange' in window) {
             window.removeEventListener('hashchange', this._onHashChange);
         }
+
+        this.isStarted = false;
     }
 }
 
