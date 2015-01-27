@@ -12,18 +12,34 @@ class State {
 
     enter (params) {
 
-        if (typeof this.onEnter === 'function') {
+        return new Promise(function (resolve, reject) {
 
-            this.onEnter(params);
-        }
+            if (typeof this.onEnter === 'function') {
+
+                resolve(this.onEnter(params));
+            }
+            else {
+
+                resolve(true);
+            }
+
+        }.bind(this));
     }
 
     exit () {
 
-        if (typeof this.onExit === 'function') {
+        return new Promise(function (resolve, reject) {
 
-            this.onExit();
-        }
+            if (typeof this.onExit === 'function') {
+
+                resolve(this.onExit());
+            }
+            else {
+
+                resolve(true);
+            }
+
+        }.bind(this));
     }
 }
 

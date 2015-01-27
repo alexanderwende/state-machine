@@ -1,14 +1,21 @@
-export default class Module {
+import StateMachine from './state-machine';
+import StateRouter from './state-router';
+
+class Module {
 
     constructor (options) {
 
+        this.modules = {};
+
+        this._stateMachine = options && options.stateMachine || new StateMachine();
+
+        this._stateRouter = options && options.stateRouter || new StateRouter({ stateMachine: this._stateMachine });
+
         if (options) {
 
+            this.id         = options.id;
             this.element    = options.element || document.querySelector(options.selector);
             this.selector   = options.selector;
-
-            this.stateMachine   = options.stateMachine;
-            this.router         = options.router;
 
             if (options.onStart) {
 
@@ -18,6 +25,20 @@ export default class Module {
 
                 this.onStop = options.onStop.bind(this);
             }
+
+            for (let id in options.states) {
+
+                options.states[id].id = id;
+
+                this.state(options.states[id]);
+            }
+
+            for (let id in options.modules) {
+
+                options.modules[id].id = id;
+
+                this.module(options.modules[id]);
+            }
         }
     }
 
@@ -25,8 +46,49 @@ export default class Module {
 
         if (this.router) {
 
-            this.router.navigate(route, options);
+            this._stateRouter.navigate(route, options);
         }
+    }
+
+    module (module) {
+
+        switch (typeof module) {
+
+            case 'object':
+
+                if (!(module instanceof Module)) {
+
+                    module = new Module(module);
+                }
+
+                this.modules[module.id] = module;
+
+                break;
+
+            case 'string':
+
+                return this.modules[module];
+        }
+
+        return this;
+    }
+
+    state (state) {
+
+        switch (typeof state) {
+
+            case 'object':
+
+                this._stateMachine.state(state);
+
+                break;
+
+            case 'string':
+
+                return this._stateMachine.state(state);
+        }
+
+        return this;
     }
 
     start (callback) {
@@ -68,3 +130,5 @@ export default class Module {
         // implement in module
     }
 }
+
+export default Module;

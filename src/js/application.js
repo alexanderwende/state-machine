@@ -71,17 +71,6 @@ r.route({
 });
 
 
-window.users = new Module({
-    router: r,
-    stateMachine: sm,
-    selector: '#users',
-    states: {
-        'list': {},
-        'details': {},
-        'edit': {}
-    }
-});
-
 window.app = new Module({
     router: r,
     stateMachine: sm,
@@ -90,9 +79,19 @@ window.app = new Module({
         'home': {},
         'users': {}
     },
+    modules: {
+        'users': {
+            selector: '#users',
+            states: {
+                'list': {},
+                'details': {},
+                'edit': {}
+            }
+        }
+    },
     onStart: function (callback) {
         console.log('starting app...');
-        this.router.start();
+        this._stateRouter.start();
     }
 });
 

@@ -35,32 +35,50 @@ class StateMachine {
 
     transition (state, params) {
 
-        if (this.current !== state) {
+        return new Promise(function (resolve, reject) {
 
-            this._exitState(this.current);
-        }
+            if (this.current !== state) {
 
-        this._enterState(state, params);
+                resolve(this._exitState(this.current).then(this._enterState(state, params)));
+            }
+            else {
+
+                resolve(this._enterState(state, params));
+            }
+
+        }.bind(this));
     }
 
     _exitState (state) {
 
-        if (this.states[state]) {
+        return new Promise(function (resolve, reject) {
 
-            this.states[state].exit();
+            if (this.states[state]) {
 
-            this.current = null;
-        }
+                resolve(this.states[state].exit().then(function () { this.current = null; }.bind(this)));
+            }
+            else {
+
+                resolve(true);
+            }
+
+        }.bind(this));
     }
 
     _enterState (state, params) {
 
-        if (this.states[state]) {
+        return new Promise(function (resolve, reject) {
 
-            this.states[state].enter(params);
+            if (this.states[state]) {
 
-            this.current = state;
-        }
+                resolve(this.states[state].enter(params).then(function () { this.current = state; }.bind(this)));
+            }
+            else {
+
+                resolve(true);
+            }
+
+        }.bind(this));
     }
 }
 
