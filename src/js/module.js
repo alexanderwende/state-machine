@@ -1,3 +1,4 @@
+import * as utils from './utils';
 import StateMachine from './state-machine';
 import StateRouter from './state-router';
 
@@ -57,6 +58,8 @@ class Module {
             case 'object':
 
                 if (!(module instanceof Module)) {
+
+                    module.stateRouter = module.stateRouter || this._stateRouter;
 
                     module = new Module(module);
                 }

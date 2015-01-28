@@ -8,6 +8,19 @@ class StateMachine {
 
         this.current = null;
         this.default = null;
+
+        if (options) {
+
+            for (let id in options.states) {
+
+                options.states[id].id = id;
+
+                this.state(options.states[id]);
+            }
+
+            this.current = options.current || null;
+            this.default = options.default || null;
+        }
     }
 
     state (state) {
@@ -66,6 +79,14 @@ class StateMachine {
     }
 
     _enterState (state, params) {
+
+        var substate = undefined;
+        var index = state.indexOf('.');
+
+        if (index > -1) {
+            substate = state.substr(index + 1);
+            state = state.substr(0, index);
+        }
 
         return new Promise(function (resolve, reject) {
 

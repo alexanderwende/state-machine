@@ -16,6 +16,16 @@ class Router {
             // update the router instance to the new hash
             console.log(hash);
         }.bind(this);
+
+        if (options) {
+
+            for (let id in options.routes) {
+
+                options.routes[id].id = id;
+
+                this.route(options.routes[id]);
+            }
+        }
     }
 
     route (route) {

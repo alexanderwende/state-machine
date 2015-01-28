@@ -1,4 +1,6 @@
-class State {
+import StateMachine from './state-machine';
+
+class State extends StateMachine {
 
     constructor (options) {
 
@@ -8,25 +10,43 @@ class State {
 
         this.onEnter    = options.onEnter;
         this.onExit     = options.onExit;
+
+        super(options);
     }
 
-    enter (params) {
+    enter (params, substate) {
 
         return new Promise(function (resolve, reject) {
 
             if (typeof this.onEnter === 'function') {
 
-                resolve(this.onEnter(params));
+                if (substate) {
+
+                    this.onEnter(params);
+
+                    resolve(this.transition(substate, params));
+                }
+                else {
+
+                    resolve(this.onEnter(params));
+                }
             }
             else {
 
-                resolve(true);
+                if (substate) {
+
+                    resolve(this.transition(substate, params));
+                }
+                else {
+
+                    resolve(true);
+                }
             }
 
         }.bind(this));
     }
 
-    exit () {
+    exit (params, substate) {
 
         return new Promise(function (resolve, reject) {
 
