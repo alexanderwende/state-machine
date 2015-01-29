@@ -12,7 +12,7 @@ class HierarchicalStateMachine {
 
             for (let name in options.states) {
 
-                this.state(options.state[name], name);
+                this.state(options.states[name], name);
             }
         }
 
@@ -48,7 +48,32 @@ class HierarchicalStateMachine {
         }
     }
 
-    transition (state, params) {}
+    transition (state, params) {
+
+        var index, substate;
+
+        index = state.indexOf('.');
+
+        if (index > -1) {
+
+            substate = state.substr(index + 1);
+            state = state.substr(0, index);
+        }
+
+        return new Promise(function (resolve, reject) {
+
+            if (this.current && this.current !== state) {
+
+                this.states[this.current].exit(params).then(function () {})
+            }
+
+            if (this.states[state]) {
+                // TODO: Finish here
+                resolve(this.states[state].enter(params, substate));
+            }
+
+        }.bind(this));
+    }
 }
 
 class State {
@@ -62,7 +87,7 @@ class State {
 
     }
 
-    enter (params) {}
+    enter (params, substate) {}
 
     exit (params) {}
 }
