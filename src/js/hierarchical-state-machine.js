@@ -15,15 +15,6 @@ class HierarchicalStateMachine {
                 this.state(options.states[name], name);
             }
         }
-
-        if (this.current) {
-
-            this.transition(this.current);
-        }
-        else if (this.default) {
-
-            this.transition(this.default);
-        }
     }
 
     state (state, name) {
@@ -60,36 +51,107 @@ class HierarchicalStateMachine {
             state = state.substr(0, index);
         }
 
-        return new Promise(function (resolve, reject) {
+        console.log('transitioning from %s to %s, params: %o', this.current, state, params);
 
-            if (this.current && this.current !== state) {
+        var promise;
 
-                this.states[this.current].exit(params).then(function () {})
-            }
+        if (this.current && this.current !== state) {
 
-            if (this.states[state]) {
-                // TODO: Finish here
-                resolve(this.states[state].enter(params, substate));
-            }
+            promise = Promise.resolve(this.states[this.current].exit(params)).then(function () {
 
-        }.bind(this));
+                this.current = null;
+
+            }.bind(this));
+        }
+        else {
+
+            promise = Promise.resolve(true);
+        }
+
+        if (this.states[state]) {
+
+            promise = promise.then(function () {
+
+                return this.states[state].enter(params, substate).then(function () {
+
+                    this.current = state;
+
+                }.bind(this));
+
+            }.bind(this));
+        }
+        else {
+
+            promise = promise.then(function () {
+
+                return new Promise.reject('State \'%s\' does not exist.'.replace('%s', state));
+
+            }.bind(this));
+        }
+
+        return promise;
     }
 }
 
-class State {
+class State extends HierarchicalStateMachine {
 
     constructor (options) {
+
+        super(options);
 
         this.name = options && options.name || '';
 
         this.data = options && options.data || {};
 
+        this.onEnter = options && options.onEnter || undefined;
 
+        this.onExit = options && options.onExit || undefined;
     }
 
-    enter (params, substate) {}
+    enter (params, substate) {
 
-    exit (params) {}
+        console.log('entering %s, params: %o, substate: %s', this.name, params, substate);
+
+        var promise;
+
+        if (typeof this.onEnter === 'function') {
+
+            promise = Promise.resolve(this.onEnter(params, substate));
+        }
+        else {
+
+            promise = Promise.resolve(true);
+        }
+
+        if (substate) {
+
+            promise = promise.then(function () {
+
+                return this.transition(substate, params);
+
+            }.bind(this));
+        }
+
+        return promise;
+    }
+
+    exit (params, substate) {
+
+        console.log('exiting %s, params: %o, substate: %s', this.name, params, substate);
+
+        var promise;
+
+        if (typeof this.onExit === 'function') {
+
+            promise = Promise.resolve(this.onExit(params));
+        }
+        else {
+
+            promise = Promise.resolve(true);
+        }
+
+        return promise;
+    }
 }
 
 export default HierarchicalStateMachine;

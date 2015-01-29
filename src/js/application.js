@@ -105,12 +105,22 @@ import HSM from './hierarchical-state-machine';
 window.hsm = new HSM({
     states: {
         home: {
-            onEnter: function (params) { console.log('entering home, params: %o', params); },
-            onExit: function (params) { console.log('exiting home, params: %o', params); }
+            onEnter: function (params, substate) { console.log('welcome to home'); },
+            onExit: function (params) { console.log('goodbye from home'); }
         },
         users: {
-            onEnter: function (params) { console.log('entering users, params: %o', params); },
-            onExit: function (params) { console.log('exiting users, params: %o', params); }
+            onEnter: function (params, substate) { console.log('welcome to users'); },
+            onExit: function (params) { console.log('goodbye from users'); },
+            states: {
+                list: {
+                    onEnter: function (params, substate) { console.log('welcome to users.list'); },
+                    onExit: function (params) { console.log('goodbye from users.list'); }
+                },
+                details: {
+                    onEnter: function (params, substate) { console.log('welcome to users.details'); },
+                    onExit: function (params) { console.log('goodbye from users.details'); }
+                }
+            }
         }
     }
 });
