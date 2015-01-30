@@ -4,6 +4,8 @@ class HierarchicalStateMachine {
 
         this.states = {};
 
+        this.parent = options && options.parent || null;
+
         this.current = options && options.current || null;
 
         this.default = options && options.default || null;
@@ -24,6 +26,7 @@ class HierarchicalStateMachine {
             case 'object':
 
                 state.name = name || state.name;
+                state.parent = this;
 
                 this.states[state.name] = new State(state);
 
@@ -41,8 +44,9 @@ class HierarchicalStateMachine {
 
     transition (state, params) {
 
-        var index, substate;
+        var index, substate, current;
 
+        current = this.current;
         index = state.indexOf('.');
 
         if (index > -1) {
@@ -51,45 +55,53 @@ class HierarchicalStateMachine {
             state = state.substr(0, index);
         }
 
-        console.log('transitioning from %s to %s, params: %o', this.current, state, params);
+        if (current) {
 
-        var promise;
+            if (current !== state) {
 
-        if (this.current && this.current !== state) {
+                return this._exit(current, params).then(function () {
 
-            promise = Promise.resolve(this.states[this.current].exit(params)).then(function () {
+                    return this._enter(state, params, substate);
 
-                this.current = null;
+                }.bind(this));
+            }
 
-            }.bind(this));
+            return this.states[state].transition(substate, params);
         }
-        else {
 
-            promise = Promise.resolve(true);
-        }
+        return this._enter(state, params, substate);
+    }
+
+    _enter (state, params, substate) {
 
         if (this.states[state]) {
 
-            promise = promise.then(function () {
+            return Promise.resolve(this.states[state].enter(params, substate).then(function () {
 
-                return this.states[state].enter(params, substate).then(function () {
+                this.current = state;
 
-                    this.current = state;
-
-                }.bind(this));
-
-            }.bind(this));
+            }.bind(this)));
         }
         else {
 
-            promise = promise.then(function () {
-
-                return new Promise.reject('State \'%s\' does not exist.'.replace('%s', state));
-
-            }.bind(this));
+            return Promise.reject('State \'%s\' does not exist.'.replace('%s', state));
         }
+    }
 
-        return promise;
+    _exit (state, params) {
+
+        if (this.states[state]) {
+
+            return Promise.resolve(this.states[state].exit(params).then(function () {
+
+                this.current = null;
+
+            }.bind(this)));
+        }
+        else {
+
+            return Promise.reject('State \'%s\' does not exist.'.replace('%s', state));
+        }
     }
 }
 
