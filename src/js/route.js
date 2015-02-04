@@ -25,7 +25,15 @@ class Route {
 
         this.reset();
 
-        return this.regexp.test(fragment);
+        var segments = fragment.split('?');
+
+        fragment = {
+            hash: fragment,
+            path: segments[0],
+            search: segments[1]
+        };
+
+        return this.regexp.test(fragment.path);
     }
 
     parse (fragment) {
@@ -34,13 +42,33 @@ class Route {
 
         this.reset();
 
-        var matches = this.regexp.exec(fragment);
+        var segments = fragment.split('?');
+
+        fragment = {
+            hash: fragment,
+            path: segments[0],
+            search: segments[1]
+        };
+
+        var matches = this.regexp.exec(fragment.path);
 
         if (matches) {
 
             for (let i = 0, length = this.params.length; i < length; i++) {
 
                 params[this.params[i]] = matches[i + 1];
+            }
+
+            if (fragment.search) {
+
+                let search = fragment.search.split('&');
+
+                for (let i = 0, length = search.length; i < length; i++) {
+
+                    search[i] = search[i].split('=');
+
+                    params[search[i][0]] = (search[i].length > 1) ? search[i][1] : true;
+                }
             }
 
             return params;

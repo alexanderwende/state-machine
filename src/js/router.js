@@ -90,6 +90,25 @@ class Router {
 
         this.isStarted = false;
     }
+
+    static getFragment () {
+
+        return window.top.location.hash.substr(1);
+    }
+
+    static setFragment (fragment, replace = false) {
+
+        if (replace) {
+
+            window.top.location.replace(window.top.location.href.replace(/#.*$/, '#' + fragment));
+        }
+        else {
+
+            window.top.location.hash = fragment;
+        }
+    }
 }
+
+
 
 export default Router;
