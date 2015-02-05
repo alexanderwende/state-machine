@@ -1,4 +1,6 @@
 import HSM from './hierarchical-state-machine';
+import Request from './request';
+import Route from './route';
 
 //window.sm = new StateMachine();
 //
@@ -101,6 +103,8 @@ import HSM from './hierarchical-state-machine';
 //
 //window.app.start();
 
+window.Request = Request;
+window.Route = Route;
 
 window.hsm = new HSM({
     states: {

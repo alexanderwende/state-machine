@@ -1,3 +1,6 @@
+import * as Utils from './utils';
+import Request from './request';
+
 class Route {
 
     constructor (options) {
@@ -21,84 +24,75 @@ class Route {
         this.regexp = new RegExp('^' + this.path.replace(Route.Matchers.Param, '([^\/]+)') + '$', 'gi');
     }
 
-    match (fragment) {
+    /**
+     * Match a route againt a request
+     *
+     * @param {string|Request} request      A hash fragment or a Request instance
+     * @returns {boolean}                   True if the path segment of the hash matches the route
+     */
+    match (request) {
+
+        if (typeof request === 'string') {
+            request = new Request(request);
+        }
 
         this.reset();
 
-        var segments = fragment.split('?');
-
-        fragment = {
-            hash: fragment,
-            path: segments[0],
-            search: segments[1]
-        };
-
-        return this.regexp.test(fragment.path);
+        return this.regexp.test(request.path);
     }
 
-    parse (fragment) {
+    /**
+     * Parse a route against a request and extract the route params
+     *
+     * @param {string|Request} request      A hash fragment or a Request instance
+     * @returns {object}                    An object containing the extracted route parameters
+     */
+    parse (request) {
 
-        var params = {};
+        var params = {}, matches;
+
+        if (typeof request === 'string') {
+            request = new Request(request);
+        }
 
         this.reset();
 
-        var segments = fragment.split('?');
-
-        fragment = {
-            hash: fragment,
-            path: segments[0],
-            search: segments[1]
-        };
-
-        var matches = this.regexp.exec(fragment.path);
-
-        if (matches) {
+        if ((matches = this.regexp.exec(request.path))) {
 
             for (let i = 0, length = this.params.length; i < length; i++) {
 
                 params[this.params[i]] = matches[i + 1];
             }
-
-            if (fragment.search) {
-
-                let search = fragment.search.split('&');
-
-                for (let i = 0, length = search.length; i < length; i++) {
-
-                    search[i] = search[i].split('=');
-
-                    params[search[i][0]] = (search[i].length > 1) ? search[i][1] : true;
-                }
-            }
-
-            return params;
         }
 
-        return undefined;
+        return params;
     }
 
-    execute (fragment) {
+    /**
+     * Execute a route againt a request
+     *
+     * @param {string|Request} request      A hash fragment or a Request instance
+     */
+    execute (request) {
 
         var params;
-        var match;
 
-        if (typeof fragment === 'string') {
+        if (typeof request === 'string') {
+            request = new Request(request);
+        }
 
-            params = this.parse(fragment);
-            match = params !== undefined;
+        if (request instanceof Request) {
+
+            params = Utils.extend(request.params, this.parse(request));
         }
         else {
 
-            params = fragment;
-            match = true;
+            params = request;
         }
 
-        if (match) {
+        if (typeof this.handler === 'function') {
 
-            if (typeof this.handler === 'function') {
-
-                this.handler(params);
-            }
+            this.handler(params);
         }
     }
 
@@ -117,5 +111,7 @@ Route.Matchers = {
 
     Param: /:([\w]+)/gi
 }
+
+
 
 export default Route;

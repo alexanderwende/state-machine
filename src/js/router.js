@@ -1,3 +1,4 @@
+import Request from './request';
 import Route from './route';
 
 class Router {
@@ -28,6 +29,12 @@ class Router {
         }
     }
 
+    /**
+     * Add or retrieve a route
+     *
+     * @param {string|object|Route}
+     * @returns {Route|Router}
+     */
     route (route) {
 
         switch (typeof route) {
@@ -58,6 +65,10 @@ class Router {
             this.routes[route].execute(options.params);
         }
         else {
+
+            if (typeof route === 'string') {
+                route = new Request(route);
+            }
 
             for (let i in this.routes) {
 
