@@ -69,29 +69,14 @@ class Route {
     }
 
     /**
-     * Execute a route againt a request
+     * Execute a route
      *
-     * @param {string|Request} request      A hash fragment or a Request instance
+     * @param {object} params       An object containing the parameters for the route handler
      */
-    execute (request) {
-
-        var params;
-
-        if (typeof request === 'string') {
-            request = new Request(request);
-        }
-
-        if (request instanceof Request) {
-
-            params = Utils.extend(request.params, this.parse(request));
-        }
-        else {
-
-            params = request;
-        }
-
+    execute (params) {
+        
         if (typeof this.handler === 'function') {
-
+            
             this.handler(params);
         }
     }

@@ -1,6 +1,7 @@
-import HSM from './hierarchical-state-machine';
+//import HSM from './hierarchical-state-machine';
 import Request from './request';
 import Route from './route';
+import Router from './router';
 
 //window.sm = new StateMachine();
 //
@@ -105,26 +106,46 @@ import Route from './route';
 
 window.Request = Request;
 window.Route = Route;
+window.Router = Router;
 
-window.hsm = new HSM({
-    states: {
-        home: {
-            onEnter: function (params, substate) { console.log('welcome to home'); },
-            onExit: function (params) { console.log('goodbye from home'); }
+window.r = new Router({
+    routes: {
+        'home': {
+            path: '/home',
+            handler: function () { console.log('home...'); }
         },
-        users: {
-            onEnter: function (params, substate) { console.log('welcome to users'); },
-            onExit: function (params) { console.log('goodbye from users'); },
-            states: {
-                list: {
-                    onEnter: function (params, substate) { console.log('welcome to users.list'); },
-                    onExit: function (params) { console.log('goodbye from users.list'); }
-                },
-                details: {
-                    onEnter: function (params, substate) { console.log('welcome to users.details'); },
-                    onExit: function (params) { console.log('goodbye from users.details'); }
-                }
-            }
+        'users': {
+            path: '/users',
+            handler: function () { console.log('users...'); }
+        },
+        'users.details': {
+            path: '/users/details/:userId',
+            handler: function (params) { console.log('users.details... userId: %s', params.userId); }
         }
     }
 });
+
+window.r.start();
+
+//window.hsm = new HSM({
+//    states: {
+//        home: {
+//            onEnter: function (params, substate) { console.log('welcome to home'); },
+//            onExit: function (params) { console.log('goodbye from home'); }
+//        },
+//        users: {
+//            onEnter: function (params, substate) { console.log('welcome to users'); },
+//            onExit: function (params) { console.log('goodbye from users'); },
+//            states: {
+//                list: {
+//                    onEnter: function (params, substate) { console.log('welcome to users.list'); },
+//                    onExit: function (params) { console.log('goodbye from users.list'); }
+//                },
+//                details: {
+//                    onEnter: function (params, substate) { console.log('welcome to users.details'); },
+//                    onExit: function (params) { console.log('goodbye from users.details'); }
+//                }
+//            }
+//        }
+//    }
+//});
