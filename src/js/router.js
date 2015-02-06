@@ -74,49 +74,10 @@ class Router {
      * @param {object} options
      */
     navigate (route, options = {}) {
-
-        var params;
-
-        if (typeof request === 'string') {
-            request = new Request(request);
-        }
-
-        if (request instanceof Request) {
-
-            params = Utils.extend(request.params, this.parse(request));
-        }
-        else {
-
-            params = request;
-        }
-
-
-        // route can be a route id
-        if (route in this.routes) {
-
-            this.routes[route].execute(options.params);
-        }
-        else {
-
-            // route can be a plain hash fragment or a Request instance
-            if (typeof route === 'string') {
-                route = new Request(route);
-            }
-
-            for (let i in this.routes) {
-
-                if (this.routes[i].match(route)) {
-
-                    this.routes[i].execute(route);
-                }
-            }
-        }
-    }
-    
-    navigate (route, options = {}) {
         
         var params, match = false;
         
+        // route can be a route id
         if (route in this.routes) {
             
             route = this.routes[route];
@@ -125,6 +86,7 @@ class Router {
         }
         else {
             
+            // route can be a plain hash fragment or a Request instance
             if (typeof route === 'string') {
                 
                 route = new Request(route);
