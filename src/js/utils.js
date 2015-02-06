@@ -42,4 +42,76 @@ function toArray (source) {
     return result;
 }
 
-export {clone, extend, toArray};
+var Parser = {
+
+    parse: function (string, format) {
+
+        return this.formats[format](string);
+    },
+
+    formats: {
+
+        urlencoded: function (string) {
+
+            var result = {}, search = string.split('&');
+
+            for (let i = 0, length = search.length; i < length; i++) {
+
+                search[i] = search[i].split('=');
+
+                let param = decodeURIComponent(search[i][0]);
+                let value = search[i][1] !== undefined ? decodeURIComponent(search[i][1]) : true;
+
+                if (result[param]) {
+
+                    if (result[param] instanceof Array) {
+
+                        result[param].push(value);
+                    }
+                    else {
+
+                        result[param] = [result[param], value];
+                    }
+                }
+                else {
+
+                    result[param] = value;
+                }
+            }
+
+            return result;
+        }
+    }
+};
+
+var Serializer = {
+
+    serialize: function (data, format) {
+
+        return this.formats[format](data);
+    },
+
+    formats: {
+
+        urlencoded: function (data) {
+
+            var result = '';
+
+            if (typeof data !== 'object') {
+
+                result = encodeURIComponent(data);
+            }
+            else {
+
+                for (let param in data) {
+
+                    result += (result ? '&' : '') + encodeURIComponent(param) + ((data[param] !== undefined) ? '=' + encodeURIComponent(data[param]) : '');
+                }
+            }
+
+            return result;
+        }
+    }
+};
+
+export {clone, extend, toArray, Parser, Serializer};

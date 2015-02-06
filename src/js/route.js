@@ -90,6 +90,28 @@ class Route {
 
         this.regexp.lastIndex = 0;
     }
+
+    toHash (params) {
+
+        var path = this.path, search, param;
+
+        params = Utils.clone(params);
+
+        this.reset();
+
+        while (params && (param = Route.Matchers.Param.exec(path))) {
+            // replace the match with the serialized value of the route parameter with the matched name
+            path = path.replace(param[0], Utils.Serializer.serialize(params[param[1]], 'urlencoded'));
+            // remove the processed parameter from the parameter list
+            delete params[param[1]];
+            // after each replacement the hash string changes in length, so we have to reset the regexp
+            this.reset();
+        }
+
+        search = Utils.Serializer.serialize(params, 'urlencoded');
+
+        return path + (search ? '?' + search : '');
+    }
 }
 
 Route.Matchers = {
