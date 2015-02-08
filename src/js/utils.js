@@ -3,20 +3,26 @@ function clone (source, deep) {
 
     if (typeof source === 'object') {
 
-        if (deep) {
-
-            if (source instanceof Object) {
-                return extend({}, source, deep);
-            }
-            else if (source instanceof Array) {
-                return extend([], source, deep);
-            }
-            else {
-                return new source.constructor(source);
-            }
+        // typeof null is 'object', so handle it
+        if (source === null) {
+            return null;
+        }
+        else if (source instanceof Object) {
+            return extend({}, source, deep);
+        }
+        else if (source instanceof Array) {
+            return extend([], source, deep);
+        }
+        // for native types we can use a copy-constructor which
+        // uses object.valueOf() to resolve the object value
+        else {
+            return new source.constructor(source);
         }
     }
 
+    // for non-object types return a simple copy,
+    // in case of functions return the reference,
+    // in case of undefined return undefined
     return source;
 }
 
@@ -26,7 +32,7 @@ function extend (target, source, deep) {
 
         if (source.hasOwnProperty(property)) {
 
-            target[property] = clone(source[property], deep);
+            target[property] = deep ? clone(source[property], deep) : source[property];
         }
     }
 

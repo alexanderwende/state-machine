@@ -11,6 +11,8 @@ class Router {
         this.current = null;
         this.default = null;
 
+        this.currentHash = null;
+
         this.isStarted = false;
 
         this._onHashChange = this.onHashChange.bind(this);
@@ -75,7 +77,7 @@ class Router {
      */
     navigate (route, options = {}) {
         
-        var params, match = false;
+        var request, params, match = false;
         
         // route can be a route id
         if (route in this.routes) {
@@ -106,9 +108,23 @@ class Router {
 
         if (match && options.trigger) {
             
+            this.current = route;
+            this.currentHash = request.hash;
+
             route.execute(params);
         }
     }
+
+
+//    navigate (hash, options) {
+//
+//        var request, route, params;
+//
+//        if (this.currentHash !== hash) {
+//
+//
+//        }
+//    }
 
     start () {
 
@@ -132,22 +148,22 @@ class Router {
         this.isStarted = false;
     }
 
-//    static getFragment () {
-//
-//        return window.top.location.hash.substr(1);
-//    }
-//
-//    static setFragment (fragment, replace = false) {
-//
-//        if (replace) {
-//
-//            window.top.location.replace(window.top.location.href.replace(/#.*$/, '#' + fragment));
-//        }
-//        else {
-//
-//            window.top.location.hash = fragment;
-//        }
-//    }
+    static getHash () {
+
+        return window.top.location.hash.substr(1);
+    }
+
+    static setHash (hash, replace = false) {
+
+        if (replace) {
+
+            window.top.location.replace(window.top.location.href.replace(/#.*$/, '#' + hash));
+        }
+        else {
+
+            window.top.location.hash = hash;
+        }
+    }
 }
 
 export default Router;
