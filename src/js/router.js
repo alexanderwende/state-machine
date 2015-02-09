@@ -7,9 +7,9 @@ class Router {
     constructor (options) {
 
         this.routes = {};
-        
+
         this.current = null;
-        this.default = null;
+        this.default = options.default || null;
 
         this.currentHash = null;
 
@@ -27,15 +27,15 @@ class Router {
             }
         }
     }
-    
+
     onHashChange (event) {
-        
+
         // get the new url from the hashchange event
         var match = event.newURL.match(/#(.+)$/);
-        
+
         // extract the hash fragment
         var hash = match && match[1] || '';
-        
+
         // update the router instance to the new hash
         this.navigate(hash, {trigger: true});
     }
@@ -77,41 +77,58 @@ class Router {
      */
     navigate (route, options = {}) {
         
-        var request, params, match = false;
-        
-        // route can be a route id
+        var hash, request, params, match = false;
+
+        console.log('Router.navigate()... route: %s, options: %o', route, options);
+
         if (route in this.routes) {
             
-            route = this.routes[route];
-            params = options.params;
-            match = true;
+            route   = this.routes[route];
+            params  = options.params;
+            hash    = route.toHash(params);
+            match   = true;
         }
         else {
-            
-            // route can be a plain hash fragment or a Request instance
+
             if (typeof route === 'string') {
                 
-                route = new Request(route);
+                request = new Request(route);
             }
             
             for (let i in this.routes) {
                 
-                if (this.routes[i].match(route)) {
+                if (this.routes[i].match(request)) {
                     
-                    match = true;
-			        params = Utils.extend(route.params, this.routes[i].parse(route));
-                    route = this.routes[i];
+                    route   = this.routes[i];
+                    params  = route.parse(request);
+                    hash    = route.toHash(params);
+                    match   = true;
                     break;
                 }
             }
         }
 
-        if (match && options.trigger) {
+        if (hash !== this.currentHash) {
             
-            this.current = route;
-            this.currentHash = request.hash;
+            if (match) {
 
-            route.execute(params);
+                this.currentHash = hash;
+                this.current = route;
+
+                Router.setHash(hash, options.replace);
+
+                if (options.trigger) {
+
+                    route.execute(params);
+                }
+            }
+            else {
+
+                if (this.default !== null) {
+
+                    this.navigate(this.default, options);
+                }
+            }
         }
     }
 

@@ -1,4 +1,8 @@
-
+/**
+ * @param {*} source            A source object to clone
+ * @param {boolean} [deep]      Deep cloning of object
+ * @returns {*}                 The cloned object
+ */
 function clone (source, deep) {
 
     if (typeof source === 'object') {
@@ -26,6 +30,12 @@ function clone (source, deep) {
     return source;
 }
 
+/**
+ * @param {*} target            A target object to extend
+ * @param {*} source            A source object to extend from
+ * @param {boolean} [deep]      Deep extending of object
+ * @returns {*}                 The extended target object
+ */
 function extend (target, source, deep) {
 
     for (let property in source) {

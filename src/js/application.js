@@ -124,7 +124,8 @@ window.r = new Router({
             path: '/users/details/:userId',
             handler: function (params) { console.log('users.details... userId: %s', params.userId); }
         }
-    }
+    },
+    default: 'home'
 });
 
 window.r.start();

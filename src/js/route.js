@@ -49,7 +49,7 @@ class Route {
      */
     parse (request) {
 
-        var params = {}, matches;
+        var params, matches;
 
         if (typeof request === 'string') {
             request = new Request(request);
@@ -61,11 +61,11 @@ class Route {
 
             for (let i = 0, length = this.params.length; i < length; i++) {
 
-                params[this.params[i]] = matches[i + 1];
+                request.params[this.params[i]] = matches[i + 1];
             }
         }
 
-        return params;
+        return request.params;
     }
 
     /**
@@ -74,9 +74,9 @@ class Route {
      * @param {object} params       An object containing the parameters for the route handler
      */
     execute (params) {
-        
+
         if (typeof this.handler === 'function') {
-            
+
             this.handler(params);
         }
     }
@@ -91,6 +91,12 @@ class Route {
         this.regexp.lastIndex = 0;
     }
 
+    /**
+     * Create a hash from a route
+     *
+     * @param {object} params       The route and query params to encode into the hash
+     * @returns {string}            The created hash
+     */
     toHash (params) {
 
         var path = this.path, search, param;
