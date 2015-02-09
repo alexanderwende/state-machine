@@ -126,7 +126,7 @@ class Router {
 
                 if (this.default !== null) {
 
-                    this.navigate(this.default, options);
+                    this.navigate(this.default, {trigger: options.trigger, replace: options.replace});
                 }
             }
         }

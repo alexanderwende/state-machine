@@ -130,7 +130,7 @@ var Serializer = {
 
             var result = '';
 
-            if (typeof data !== 'object') {
+            if (typeof data !== 'object' && data !== undefined) {
 
                 result = encodeURIComponent(data);
             }
