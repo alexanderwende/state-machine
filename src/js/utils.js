@@ -128,17 +128,44 @@ var Serializer = {
 
         urlencoded: function (data) {
 
+//            var result = '';
+//
+//            if (typeof data !== 'object' && data !== undefined) {
+//
+//                result = encodeURIComponent(data);
+//            }
+//            else {
+//
+//                for (let param in data) {
+//
+//                    result += (result ? '&' : '') + encodeURIComponent(param) + ((data[param] !== undefined) ? '=' + encodeURIComponent(data[param]) : '');
+//                }
+//            }
+//
+//            return result;
+
+
             var result = '';
 
-            if (typeof data !== 'object' && data !== undefined) {
+            if (data) {
 
-                result = encodeURIComponent(data);
-            }
-            else {
+                if (data.constructor === Object) {
 
-                for (let param in data) {
+                    for (let param in data) {
 
-                    result += (result ? '&' : '') + encodeURIComponent(param) + ((data[param] !== undefined) ? '=' + encodeURIComponent(data[param]) : '');
+                        let value = data[param];
+
+                        let name = encodeURIComponent(param);
+
+                        if (value !== undefined) {
+
+                            // TODO: finish this!
+                        }
+                    }
+                }
+                else if (data.constructor === Array) {
+
+
                 }
             }
 

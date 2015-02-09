@@ -11,6 +11,8 @@ describe('Utils', function () {
 
     var clone;
     var extend;
+    var Serializer;
+    var Parser;
 
     before(function (done) {
 
@@ -18,6 +20,8 @@ describe('Utils', function () {
             .then(function (module) {
                 clone = module.clone;
                 extend = module.extend;
+                Serializer = module.Serializer;
+                Parser = module.Parser;
                 done();
             })
             .catch(function (error) {
@@ -121,6 +125,27 @@ describe('Utils', function () {
             b = [5, 6, [7, 8]];
 
             assert.notEqual(extend(a, b, true)[2], b[2]);
+
+            done();
+        });
+    });
+
+    describe('#Serialzer', function () {
+
+        it('should serialize data', function (done) {
+
+            var data = {
+                user: {
+                    name: 'alex',
+                    age: 32
+                },
+                what: ['first', 'last'],
+                asc: true
+            };
+
+            var query = encodeURI('user[name]=alex&user[age]=32&what=first&what=last&asc=true');
+
+            assert.equal(Serializer.serialize(data, 'urlencoded'), query);
 
             done();
         });
