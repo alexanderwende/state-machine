@@ -7,10 +7,10 @@ function clone (source, deep) {
         if (source === null) {
             return null;
         }
-        else if (source instanceof Object) {
+        else if (source.constructor === Object) {
             return extend({}, source, deep);
         }
-        else if (source instanceof Array) {
+        else if (source.constructor === Array) {
             return extend([], source, deep);
         }
         // for native types we can use a copy-constructor which
@@ -32,7 +32,24 @@ function extend (target, source, deep) {
 
         if (source.hasOwnProperty(property)) {
 
-            target[property] = deep ? clone(source[property], deep) : source[property];
+            let value = source[property];
+
+            if (deep) {
+
+                if (typeof value === 'object') {
+
+                    if (value.constructor === Object) {
+
+                        value = extend(target[property] || {}, value, deep);
+                    }
+                    else if (value.constructor === Array) {
+
+                        value = extend(target[property] || [], value, deep);
+                    }
+                }
+            }
+
+            target[property] = value;
         }
     }
 
@@ -119,5 +136,6 @@ var Serializer = {
         }
     }
 };
+
 
 export {clone, extend, toArray, Parser, Serializer};

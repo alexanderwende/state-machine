@@ -1,4 +1,5 @@
 //import HSM from './hierarchical-state-machine';
+import * as Utils from './utils';
 import Request from './request';
 import Route from './route';
 import Router from './router';
@@ -104,6 +105,7 @@ import Router from './router';
 //
 //window.app.start();
 
+window.Utils = Utils;
 window.Request = Request;
 window.Route = Route;
 window.Router = Router;

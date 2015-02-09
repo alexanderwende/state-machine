@@ -115,17 +115,6 @@ class Router {
         }
     }
 
-
-//    navigate (hash, options) {
-//
-//        var request, route, params;
-//
-//        if (this.currentHash !== hash) {
-//
-//
-//        }
-//    }
-
     start () {
 
         if (this.isStarted) { return; }

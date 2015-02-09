@@ -9,13 +9,15 @@ describe('Utils', function () {
 
     'use strict';
 
-    var Utils;
+    var clone;
+    var extend;
 
     before(function (done) {
 
         System.import('./utils')
             .then(function (module) {
-                Utils = module.default;
+                clone = module.clone;
+                extend = module.extend;
                 done();
             })
             .catch(function (error) {
@@ -23,11 +25,102 @@ describe('Utils', function () {
             });
     });
 
-    describe('#someMethod()', function () {
+    describe('#clone()', function () {
 
-        it('should do something', function (done) {
+        it('should clone an object', function (done) {
 
-            // assert something
+            var a = [1, 2, [3, 4]];
+            var o = {a: 1, b: '2', c: {foo: 'bar'}};
+            var r = /^foo.*bar$/gi;
+
+            assert.strictEqual(clone(undefined), undefined);
+            assert.strictEqual(clone(null), null);
+            assert.strictEqual(clone(1), 1);
+            assert.strictEqual(clone('text'), 'text');
+            assert.strictEqual(clone(true), true);
+
+            assert.notEqual(clone(a), a);
+            assert.deepEqual(clone(a), a);
+            assert.equal(clone(a)[2], a[2]);
+            assert.deepEqual(clone(a, true), a);
+            assert.notEqual(clone(a, true)[2], a[2]);
+
+            assert.notEqual(clone(o), o);
+            assert.deepEqual(clone(o), o);
+            assert.equal(clone(o).c, o.c);
+            assert.deepEqual(clone(o, true), o);
+            assert.notEqual(clone(o, true).c, o.c);
+
+            assert.notEqual(clone(r), r);
+            assert.deepEqual(clone(r), r);
+
+            done();
+        });
+    });
+
+    describe('#extend()', function () {
+
+        it('should extend an object', function (done) {
+
+            var a = {c: {bar: 'foo'}};
+            var b = {a: 1, b: '2', c: {foo: 'bar'}};
+
+            assert.equal(extend(a, b), a);
+
+            a = {c: {bar: 'foo'}};
+            b = {a: 1, b: '2', c: {foo: 'bar'}};
+
+            assert.notEqual(extend(a, b), b);
+
+            a = {c: {bar: 'foo'}};
+            b = {a: 1, b: '2', c: {foo: 'bar'}};
+
+            assert.deepEqual(extend(a, b), b);
+
+            a = {c: {bar: 'foo'}};
+            b = {a: 1, b: '2', c: {foo: 'bar'}};
+
+            assert.equal(extend(a, b).c, b.c);
+
+            a = {c: {bar: 'foo'}};
+            b = {a: 1, b: '2', c: {foo: 'bar'}};
+
+            assert.deepEqual(extend(a, b, true), {a: 1, b: '2', c: {bar: 'foo', foo: 'bar'}});
+
+            a = {c: {bar: 'foo'}};
+            b = {a: 1, b: '2', c: {foo: 'bar'}};
+
+            assert.notEqual(extend(a, b, true).c, b.c);
+
+            a = [1, 2, [3, 4]];
+            b = [5, 6, [7, 8]];
+
+            assert.equal(extend(a, b), a);
+
+            a = [1, 2, [3, 4]];
+            b = [5, 6, [7, 8]];
+
+            assert.notEqual(extend(a, b), b);
+
+            a = [1, 2, [3, 4]];
+            b = [5, 6, [7, 8]];
+
+            assert.deepEqual(extend(a, b), b);
+
+            a = [1, 2, [3, 4]];
+            b = [5, 6, [7, 8]];
+
+            assert.equal(extend(a, b)[2], b[2]);
+
+            a = [1, 2, [3, 4]];
+            b = [5, 6, [7, 8]];
+
+            assert.deepEqual(extend(a, b, true), b);
+
+            a = [1, 2, [3, 4]];
+            b = [5, 6, [7, 8]];
+
+            assert.notEqual(extend(a, b, true)[2], b[2]);
 
             done();
         });
