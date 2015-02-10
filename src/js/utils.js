@@ -1,3 +1,6 @@
+import Parser from './parser';
+import Serializer from './serializer';
+
 /**
  * @param {*} source            A source object to clone
  * @param {boolean} [deep]      Deep cloning of object
@@ -75,57 +78,57 @@ function toArray (source) {
     return result;
 }
 
-var Parser = {
+//var Parser = {
+//
+//    parse: function (string, format) {
+//
+//        return this.formats[format](string);
+//    },
+//
+//    formats: {
+//
+//        urlencoded: function (string) {
+//
+//            var result = {}, search = string.split('&');
+//
+//            for (let i = 0, length = search.length; i < length; i++) {
+//
+//                search[i] = search[i].split('=');
+//
+//                let param = decodeURIComponent(search[i][0]);
+//                let value = search[i][1] !== undefined ? decodeURIComponent(search[i][1]) : true;
+//
+//                if (result[param]) {
+//
+//                    if (result[param] instanceof Array) {
+//
+//                        result[param].push(value);
+//                    }
+//                    else {
+//
+//                        result[param] = [result[param], value];
+//                    }
+//                }
+//                else {
+//
+//                    result[param] = value;
+//                }
+//            }
+//
+//            return result;
+//        }
+//    }
+//};
 
-    parse: function (string, format) {
-
-        return this.formats[format](string);
-    },
-
-    formats: {
-
-        urlencoded: function (string) {
-
-            var result = {}, search = string.split('&');
-
-            for (let i = 0, length = search.length; i < length; i++) {
-
-                search[i] = search[i].split('=');
-
-                let param = decodeURIComponent(search[i][0]);
-                let value = search[i][1] !== undefined ? decodeURIComponent(search[i][1]) : true;
-
-                if (result[param]) {
-
-                    if (result[param] instanceof Array) {
-
-                        result[param].push(value);
-                    }
-                    else {
-
-                        result[param] = [result[param], value];
-                    }
-                }
-                else {
-
-                    result[param] = value;
-                }
-            }
-
-            return result;
-        }
-    }
-};
-
-var Serializer = {
-
-    serialize: function (data, format) {
-
-        return this.formats[format](data);
-    },
-
-    formats: {
-
+//var Serializer = {
+//
+//    serialize: function (data, format) {
+//
+//        return this.formats[format](data);
+//    },
+//
+//    formats: {
+//
 //        urlencoded: function (data) {
 //
 //
@@ -154,80 +157,12 @@ var Serializer = {
 //            }
 //
 //            return result;
-//        },
+//        }
+//    }
+//};
 
-        urlencoded: function (data) {
+var parse = Parser.parse.bind(Parser);
 
-            /**
-             * A nested, recursive serialization method to create name-value pairs
-             *
-             * @param {*} value
-             * @param {string} [name]
-             * @returns {string}
-             */
-            function serialize (value, name) {
+var serialize = Serializer.serialize.bind(Serializer);
 
-                var serialization = '', i, length;
-
-                // undefined values should not appear in the serialization
-                if (value === undefined) {
-                    serialization = '';
-                }
-                // null values should be serialized to empty strings
-                else if (value === null) {
-                    serialization = name ? encodeURIComponent(name) + '=' : '';
-                }
-                // primitive types can just be stringified
-                else if (typeof value !== "object") {
-                    serialization = (name ? encodeURIComponent(name) + '=' : '') + encodeURIComponent(value.toString());
-                }
-                else {
-                    // for native types use toString()
-                    if (value instanceof Boolean ||
-                        value instanceof Number ||
-                        value instanceof String ||
-                        value instanceof RegExp) {
-
-                        serialization = (name ? encodeURIComponent(name) + '=' : '') + encodeURIComponent(value.toString());
-                    }
-                    // for dates use toUTCString()
-                    else if (value instanceof Date) {
-                        serialization = (name ? encodeURIComponent(name) + '=' : '') + encodeURIComponent(value.toISOString());
-                    }
-                    // recursively serialize arrays with brackets notation
-                    else if (value instanceof Array) {
-                        for (i = 0, length = value.length; i < length; i++) {
-                            serialization += (serialization ? '&' : '') + serialize(value[i], name ? name + '[]' : '[]');
-                        }
-                    }
-                    // recursively serialize objects, using the keys as name in the nested serialization step
-                    else {
-                        for (i in value) {
-                            if (value.hasOwnProperty(i)) {
-                                serialization += (serialization ? '&' : '') + serialize(value[i], name ? name + '[' + i + ']' : i);
-                            }
-                        }
-                    }
-                }
-
-                return serialization;
-            }
-
-            return serialize(data);
-        },
-
-        /**
-         * Serialize a data object into a JSON-encoded string
-         *
-         * @param {*} data
-         * @returns {string}
-         */
-        json: function (data) {
-
-            return JSON.stringify(data);
-        }
-    }
-};
-
-
-export {clone, extend, toArray, Parser, Serializer};
+export {clone, extend, toArray, parse, serialize};

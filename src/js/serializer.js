@@ -15,26 +15,10 @@ var Serializer = {
     serialize: function (data, serializer) {
 
         if (!this.Serializers[serializer]) {
-            throw new ReferenceError("Serializer has no serializer method '" + serializer + "'", "serializer.js", 23);
+            throw new ReferenceError("Serializer has no serializer method '" + serializer + "'");
         }
 
         return this.Serializers[serializer](data);
-    },
-
-    /**
-     * Parse a string
-     *
-     * @param {string} data
-     * @param {string} parser
-     * @returns {*}
-     */
-    parse: function (data, parser) {
-
-        if (!this.Parsers[parser]) {
-            throw new ReferenceError("Serializer has no parser method '" + parser + "'", "serializer.js", 39);
-        }
-
-        return this.Parsers[parser](data);
     },
 
     /**
@@ -46,119 +30,6 @@ var Serializer = {
     addSerializer: function (name, method) {
 
         this.Serializers[name] = method;
-    },
-
-    /**
-     * Add a parsing method
-     *
-     * @param {string} name
-     * @param {function(string): *} method
-     */
-    addParser: function (name, method) {
-
-        this.Parsers[name] = method;
-    },
-
-    /**
-     * Check if a string represents a number
-     *
-     * @param {string} dataString
-     * @returns {boolean}
-     */
-    isNumber: function (dataString) {
-
-        // parseFloat() is surprisingly slow, also it will strip characters from the input string,
-        // following RegExp performs over 40% better and returns false for strings like "12kg"
-        // however allowing exponential notations like "1e-24", the non-capturing groups (?: )
-        // perform slightly faster than capturing groups
-        return (/^\d+(?:\.\d+)?(?:e-?\d+)?$/).test(dataString);
-    },
-
-    /**
-     * Convert a string to a number
-     *
-     * @param {string} dataString
-     * @returns {number}
-     */
-    toNumber: function (dataString) {
-
-        return parseFloat(dataString);
-    },
-
-    /**
-     * Check if a string represents a boolean
-     *
-     * @param {string} dataString
-     * @returns {boolean}
-     */
-    isBoolean: function (dataString) {
-
-        // the RegExp test is about 20% faster than a comparable implementation
-        // with string comparison and toLowerCase()
-        return (/^true$|^false$/i).test(dataString);
-    },
-
-    /**
-     * Convert a string to a boolean
-     *
-     * @param {string} dataString
-     * @returns {boolean}
-     */
-    toBoolean: function (dataString) {
-
-        return (/^true$/i).test(dataString);
-    },
-
-    /**
-     * Check if a string represents a date
-     *
-     * @param {string} dataString
-     * @returns {boolean}
-     */
-    isDate: function (dataString) {
-
-        // the RegExp tests a string against the ISO date format, so it matches if a date
-        // was serialized with the toISOString() method, as in toJSON() e.g.,
-        // and it is over 90% faster than a comparable implementation involving the construction
-        // of a new Date instance and its serialization and comparison with the original string
-        return (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/).test(dataString);
-    },
-
-    /**
-     * Convert a string to a date
-     *
-     * @param {string} dataString
-     * @returns {Date}
-     */
-    toDate: function (dataString) {
-
-        return new Date(dataString);
-    },
-
-    /**
-     * Check if a string represents a regexp
-     *
-     * @param {string} dataString
-     * @returns {boolean}
-     */
-    isRegExp: function (dataString) {
-
-        return (/^\/.*\/(?:g|i|m|y){0,4}$/).test(dataString);
-    },
-
-    /**
-     * Convert a string to a regexp
-     *
-     * @param {string} dataString
-     * @returns {RegExp}
-     */
-    toRegExp: function (dataString) {
-
-        var matches = (/^\/(.*)\/(g|i|m|y){0,4}$/).exec(dataString);
-        var pattern = matches[1];
-        var flags = matches[2];
-
-        return new RegExp(pattern, flags);
     },
 
     /**

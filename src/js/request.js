@@ -1,4 +1,4 @@
-import Parser from './utils';
+import * as Utils from './utils';
 
 class Request {
 
@@ -21,7 +21,7 @@ class Request {
 
         if (this.search) {
 
-            this.params = Parser.parse(this.search, 'urlencoded');
+            this.params = Utils.parse(this.search, 'urlencoded');
         }
     }
 }

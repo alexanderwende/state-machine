@@ -5,17 +5,17 @@ System.config({
     baseURL: 'src/js'
 });
 
-describe('Serializer', function () {
+describe('Parser', function () {
 
     'use strict';
 
-    var Serializer;
+    var Parser;
 
     before(function (done) {
 
-        System.import('./serializer')
+        System.import('./parser')
             .then(function (module) {
-                Serializer = module.default;
+                Parser = module.default;
                 done();
             })
             .catch(function (error) {
@@ -23,22 +23,22 @@ describe('Serializer', function () {
             });
     });
 
-    describe('#serialize()', function () {
+    describe('#parse()', function () {
 
-        it('should serialize data to url-encoded string', function (done) {
+        it('should parse url-encoded strings', function (done) {
+
+            var query = encodeURI('user[name]=alex&user[age]=32&what[]=first&what[]=last&asc=true');
 
             var data = {
                 user: {
                     name: 'alex',
-                    age: 32
+                    age: '32'
                 },
                 what: ['first', 'last'],
-                asc: true
+                asc: 'true'
             };
 
-            var query = encodeURI('user[name]=alex&user[age]=32&what[]=first&what[]=last&asc=true');
-
-            assert.equal(Serializer.serialize(data, 'urlencoded'), query);
+            assert.deepEqual(Parser.parse(query, 'urlencoded'), data);
 
             done();
         });
