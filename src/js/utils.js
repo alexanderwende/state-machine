@@ -126,50 +126,105 @@ var Serializer = {
 
     formats: {
 
-        urlencoded: function (data) {
-
+//        urlencoded: function (data) {
+//
+//
 //            var result = '';
 //
-//            if (typeof data !== 'object' && data !== undefined) {
+//            if (data) {
 //
-//                result = encodeURIComponent(data);
-//            }
-//            else {
+//                if (data.constructor === Object) {
 //
-//                for (let param in data) {
+//                    for (let param in data) {
 //
-//                    result += (result ? '&' : '') + encodeURIComponent(param) + ((data[param] !== undefined) ? '=' + encodeURIComponent(data[param]) : '');
+//                        let value = data[param];
+//
+//                        let name = encodeURIComponent(param);
+//
+//                        if (value !== undefined) {
+//
+//                            // TODO: finish this!
+//                        }
+//                    }
+//                }
+//                else if (data.constructor === Array) {
+//
+//
 //                }
 //            }
 //
 //            return result;
+//        },
 
+        urlencoded: function (data) {
 
-            var result = '';
+            /**
+             * A nested, recursive serialization method to create name-value pairs
+             *
+             * @param {*} value
+             * @param {string} [name]
+             * @returns {string}
+             */
+            function serialize (value, name) {
 
-            if (data) {
+                var serialization = '', i, length;
 
-                if (data.constructor === Object) {
+                // undefined values should not appear in the serialization
+                if (value === undefined) {
+                    serialization = '';
+                }
+                // null values should be serialized to empty strings
+                else if (value === null) {
+                    serialization = name ? encodeURIComponent(name) + '=' : '';
+                }
+                // primitive types can just be stringified
+                else if (typeof value !== "object") {
+                    serialization = (name ? encodeURIComponent(name) + '=' : '') + encodeURIComponent(value.toString());
+                }
+                else {
+                    // for native types use toString()
+                    if (value instanceof Boolean ||
+                        value instanceof Number ||
+                        value instanceof String ||
+                        value instanceof RegExp) {
 
-                    for (let param in data) {
-
-                        let value = data[param];
-
-                        let name = encodeURIComponent(param);
-
-                        if (value !== undefined) {
-
-                            // TODO: finish this!
+                        serialization = (name ? encodeURIComponent(name) + '=' : '') + encodeURIComponent(value.toString());
+                    }
+                    // for dates use toUTCString()
+                    else if (value instanceof Date) {
+                        serialization = (name ? encodeURIComponent(name) + '=' : '') + encodeURIComponent(value.toISOString());
+                    }
+                    // recursively serialize arrays with brackets notation
+                    else if (value instanceof Array) {
+                        for (i = 0, length = value.length; i < length; i++) {
+                            serialization += (serialization ? '&' : '') + serialize(value[i], name ? name + '[]' : '[]');
+                        }
+                    }
+                    // recursively serialize objects, using the keys as name in the nested serialization step
+                    else {
+                        for (i in value) {
+                            if (value.hasOwnProperty(i)) {
+                                serialization += (serialization ? '&' : '') + serialize(value[i], name ? name + '[' + i + ']' : i);
+                            }
                         }
                     }
                 }
-                else if (data.constructor === Array) {
 
-
-                }
+                return serialization;
             }
 
-            return result;
+            return serialize(data);
+        },
+
+        /**
+         * Serialize a data object into a JSON-encoded string
+         *
+         * @param {*} data
+         * @returns {string}
+         */
+        json: function (data) {
+
+            return JSON.stringify(data);
         }
     }
 };
