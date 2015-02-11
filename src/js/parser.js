@@ -14,11 +14,11 @@ var Parser = {
      */
     parse: function (data, parser) {
 
-        if (!this.Parsers[parser]) {
+        if (!this.parsers[parser]) {
             throw new ReferenceError("Parser has no parser method '" + parser + "'");
         }
 
-        return this.Parsers[parser](data);
+        return this.parsers[parser](data);
     },
 
     /**
@@ -27,9 +27,9 @@ var Parser = {
      * @param {string} name
      * @param {function(string): *} method
      */
-    addParser: function (name, method) {
+    add: function (name, method) {
 
-        this.Parsers[name] = method;
+        this.parsers[name] = method;
     },
 
     /**
@@ -139,26 +139,17 @@ var Parser = {
      *
      * @type {Object.<string, function(string): *>}
      */
-    Parsers: {
+    parsers: {
 
         /**
          * Parse a url-encoded string
          *
-         * @param {string} dataString
-         * @returns {*}
+         * @param {string} string
+         * @returns {object}
          */
-        'urlencoded': function (dataString) {
+        'urlencoded': function (string) {
 
-            // if parameter string is empty return a null object
-            if (!dataString) { return null; }
-
-            // make sure to only look at the query string
-            dataString = dataString.substr(dataString.indexOf('?') + 1);
-
-            // split up the parameters
-            var paramSegments = dataString.split('&');
-
-            var params = {}, name, value, valueIndex;
+            var params = {}, segments, name, value;
 
             /**
              * A nested, recursive parsing method which allows to create deeply nested objects from strings
@@ -211,31 +202,18 @@ var Parser = {
                 }
             }
 
-            for (var i = 0, length = paramSegments.length; i < length; i++) {
+            // make sure to only look at the query string
+            string = string.substr(string.indexOf('?') + 1);
 
-                valueIndex = paramSegments[i].indexOf('=');
+            // split up the parameters
+            segments = string.split('&');
 
-                if(valueIndex > 0) {
-                    name = decodeURIComponent(paramSegments[i].substring(0, valueIndex));
-                    value = decodeURIComponent(paramSegments[i].substr(valueIndex + 1));
+            for (let i = 0, length = segments.length; i < length; i++) {
 
-//                    if (Serializer.isBoolean(value)) {
-//                        value = Serializer.toBoolean(value);
-//                    }
-//                    else if (Serializer.isNumber(value)) {
-//                        value = Serializer.toNumber(value);
-//                    }
-//                    else if (Serializer.isDate(value)) {
-//                        value = Serializer.toDate(value);
-//                    }
-//                    else if (Serializer.isRegExp(value)) {
-//                        value = Serializer.toRegExp(value);
-//                    }
+                segments[i] = segments[i].split('=');
 
-                } else {
-                    name = decodeURIComponent(paramSegments[i]);
-                    value = true;
-                }
+                name = decodeURIComponent(segments[i][0]);
+                value = segments[i][1] !== undefined ? decodeURIComponent(segments[i][1]) : true;
 
                 parseValue(name, value, params);
             }
@@ -246,12 +224,12 @@ var Parser = {
         /**
          * Parse a JSON-encoded string
          *
-         * @param {string} dataString
+         * @param {string} string
          * @returns {*}
          */
-        'json': function (dataString) {
+        'json': function (string) {
 
-            return JSON.parse(dataString);
+            return JSON.parse(string);
         }
     }
 };
