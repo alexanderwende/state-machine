@@ -77,7 +77,7 @@ class Router {
      */
     navigate (route, options = {}) {
         
-        var hash, request, params, match = false;
+        var hash, request, params, query, match = false;
 
         console.log('Router.navigate()... route: %s, options: %o', route, options);
 
@@ -85,7 +85,8 @@ class Router {
             
             route   = this.routes[route];
             params  = options.params;
-            hash    = route.toHash(params);
+            query   = options.query;
+            hash    = route.toHash(params, query);
             match   = true;
         }
         else {
@@ -101,7 +102,8 @@ class Router {
                     
                     route   = this.routes[i];
                     params  = route.parse(request);
-                    hash    = route.toHash(params);
+                    query   = request.query;
+                    hash    = route.toHash(params, query);
                     match   = true;
                     break;
                 }
@@ -119,7 +121,7 @@ class Router {
 
                 if (options.trigger) {
 
-                    route.execute(params);
+                    route.execute(params, query);
                 }
             }
             else {

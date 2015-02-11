@@ -7,7 +7,9 @@ class Request {
         this.hash = hash;
         this.path = '';
         this.search = '';
+
         this.params = {};
+        this.query = {};
 
         this.parse();
     }
@@ -21,7 +23,7 @@ class Request {
 
         if (this.search) {
 
-            this.params = Utils.parse(this.search, 'urlencoded');
+            this.query = Utils.parse(this.search, 'urlencoded');
         }
     }
 }

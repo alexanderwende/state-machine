@@ -49,7 +49,7 @@ class Route {
      */
     parse (request) {
 
-        var params, matches;
+        var matches;
 
         if (typeof request === 'string') {
             request = new Request(request);
@@ -72,12 +72,13 @@ class Route {
      * Execute a route
      *
      * @param {object} params       An object containing the parameters for the route handler
+     * @param {object} query        An object containing the query parameters
      */
-    execute (params) {
+    execute (params, query) {
 
         if (typeof this.handler === 'function') {
 
-            this.handler(params);
+            this.handler(params, query);
         }
     }
 
@@ -94,27 +95,24 @@ class Route {
     /**
      * Create a hash from a route
      *
-     * @param {object} params       The route and query params to encode into the hash
+     * @param {object} params       The route params to encode into the hash
+     * @param {object} query        The query params to encode into the hash
      * @returns {string}            The created hash
      */
-    toHash (params) {
+    toHash (params, query) {
 
         var path = this.path, search, param;
-
-        params = Utils.clone(params);
 
         this.reset();
 
         while (params && (param = Route.Matchers.Param.exec(path))) {
             // replace the match with the serialized value of the route parameter with the matched name
             path = path.replace(param[0], Utils.serialize(params[param[1]], 'urlencoded'));
-            // remove the processed parameter from the parameter list
-            delete params[param[1]];
             // after each replacement the hash string changes in length, so we have to reset the regexp
             this.reset();
         }
 
-        search = Utils.serialize(params, 'urlencoded');
+        search = Utils.serialize(query, 'urlencoded');
 
         return path + (search ? '?' + search : '');
     }
