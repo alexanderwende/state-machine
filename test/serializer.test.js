@@ -30,13 +30,17 @@ describe('Serializer', function () {
             var data = {
                 user: {
                     name: 'alex',
-                    age: 32
+                    age: 32,
+                    address: {
+                        street: 'some street',
+                        number: 1
+                    }
                 },
                 what: ['first', 'last'],
                 asc: true
             };
 
-            var query = encodeURI('user[name]=alex&user[age]=32&what[]=first&what[]=last&asc=true');
+            var query = encodeURI('user[name]=alex&user[age]=32&user[address][street]=some street&user[address][number]=1&what[]=first&what[]=last&asc=true');
 
             assert.equal(Serializer.serialize(data, 'urlencoded'), query);
 
