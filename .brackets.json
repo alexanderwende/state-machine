@@ -16,5 +16,16 @@
         }
     },
 
-    "jscodehints.inferenceTimeout": 30000
+    "jscodehints.inferenceTimeout": 30000,
+
+    "language": {
+
+        "javascript": {
+
+            "linting.prefer": "JSHint",
+            "linting.usePreferredOnly": true
+        }
+    },
+
+    "jshint.scanProjectOnly": true
 }
