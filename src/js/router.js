@@ -1,6 +1,9 @@
 import Request from './request';
 import Route from './route';
 
+/**
+ * @class Router
+ */
 class Router {
 
     /**
