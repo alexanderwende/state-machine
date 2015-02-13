@@ -9,7 +9,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://alexanderwende@bitbucket.org/alexanderwende/state-machine.git"
+        "url": "git@github.com:alexanderwende/state-machine.git"
     },
     "author": "Alexander Wende",
     "license": "MIT",
