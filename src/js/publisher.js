@@ -7,6 +7,19 @@ class Publisher {
         this._events = {};
     }
 
+    ensure (event, key) {
+
+        if (!event[key]) {
+
+            event[key] = {
+                subscribers: [],
+                events: {}
+            }
+        }
+
+        return event[key];
+    }
+
     /**
      * Publish an event
      *
@@ -23,8 +36,8 @@ class Publisher {
 
         for (i = 0; i < length; i++) {
 
-            subscribers = subscribers.concat(event[this._eventWildcard].subscribers, event[i].subscribers);
-            event = event[i].events;
+            subscribers = subscribers.concat(this.ensure(event, this._eventWildcard).subscribers, this.ensure(event, key[i]).subscribers);
+            event = event[key[i]].events;
         }
 
         for (i = subscribers.length; i-- > 0; subscribers[i](key, data));
@@ -46,8 +59,15 @@ class Publisher {
 
         for (i = 0; i < length; i++) {
 
-            subscribers = event[i].subscribers;
-            event = event[i].events;
+            if (!event[keys[i]]) {
+                event[keys[i]] = {
+                    subscribers: [],
+                    events: {}
+                };
+            }
+
+            subscribers = this.ensure(event, keys[i]).subscribers;
+            event = event[keys[i]].events;
         }
 
         subscribers.push(callback);

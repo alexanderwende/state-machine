@@ -3,6 +3,7 @@ import * as Utils from './utils';
 import Request from './request';
 import Route from './route';
 import Router from './router';
+import Mediator from './mediator';
 
 //window.sm = new StateMachine();
 //
@@ -109,6 +110,7 @@ window.Utils = Utils;
 window.Request = Request;
 window.Route = Route;
 window.Router = Router;
+window.Mediator = Mediator;
 
 window.r = new Router({
     routes: {
