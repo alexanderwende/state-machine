@@ -1,22 +1,25 @@
+/**
+ * @class Tree
+ */
 class Tree {
 
     /**
-     * @constructor
+     * @constructs Tree
      *
-     * @param {object} [options]
-     * @param {string} [options.delimiter]
-     * @param {string} [options.wildcard]
-     * @param {function} [options.nodeType]
+     * @param {Object}   [options]               An object containing options
+     * @param {String}   [options.delimiter=.]   The delimiter used for breaking up nested keys
+     * @param {String}   [options.wildcard=*]    The wildcard used for specifying all nested keys
+     * @param {Function} [options.nodeType=Node] The node constructor to be used for tree nodes
      */
     constructor (options) {
 
-        /** @type {string} */
+        /** @type {String} */
         this._delimiter = options && options.delimiter || '.';
 
-        /** @type {string} */
+        /** @type {String} */
         this._wildcard = options && options.wildcard || '*';
 
-        /** @type {function} */
+        /** @type {Function} */
         this._nodeType = options && options.nodeType || Node;
 
         /** @type {Node} */
@@ -24,8 +27,10 @@ class Tree {
     }
 
     /**
-     * @param {string} key
-     * @returns {*}
+     * Get the node value for a key
+     *
+     * @param   {String} key The key of the node
+     * @returns {*}      The value of the node
      */
     get (key) {
 
@@ -36,18 +41,17 @@ class Tree {
 
             node = node.getChild(keys[i]);
 
-            if (!node) {
-
-                return undefined;
-            }
+            if (!node) { return undefined; }
         }
 
         return node.getValue();
     }
 
     /**
-     * @param {string} key
-     * @returns {Array}
+     * Get the node value for a key, including all wildcard values along the way
+     *
+     * @param   {String} key The key of the node
+     * @returns {Array}  An array with all the collected values
      */
     collect (key) {
 
@@ -70,10 +74,7 @@ class Tree {
 
             node = node.getChild(keys[i]);
 
-            if (!node) {
-
-                break;
-            }
+            if (!node) { break; }
         }
 
         if (node) {
@@ -90,8 +91,10 @@ class Tree {
     }
 
     /**
-     * @param {string} key
-     * @param {*} value
+     * Set the value of a node
+     *
+     * @param {String} key   The key of the node
+     * @param {*}      value The value for the node
      */
     set (key, value) {
 
@@ -112,9 +115,11 @@ class Tree {
     }
 
     /**
-     * @param {string} key
-     * @param {*} [value]
-     * @returns {*}
+     * Remove the value of a node
+     *
+     * @param   {String} key     The key of the node
+     * @param   {*}      [value] The value to be removed or undefined (all values will be removed)
+     * @returns {*}      The removed value or undefined if no value was removed
      */
     remove (key, value) {
 
@@ -144,12 +149,15 @@ class Tree {
     }
 }
 
+/**
+ * @class Node
+ */
 class Node {
 
     /**
-     * @constructor
+     * @constructs Node
      *
-     * @param {string} key
+     * @param {String} key
      * @param {*} value
      * @param {Node} [parent]
      */
@@ -164,11 +172,21 @@ class Node {
         this.setParent(parent);
     }
 
+    /**
+     * Get the value of a node
+     *
+     * @returns {*} The value stored in the node
+     */
     getValue () {
 
         return this.value;
     }
 
+    /**
+     * Set the value of a node
+     *
+     * @param {*} value The new value of the node
+     */
     setValue (value) {
 
         if (value === undefined) {
@@ -181,6 +199,11 @@ class Node {
         }
     }
 
+    /**
+     * Remove the value of a ndoe
+     *
+     * @returns {*} The removed value of the node
+     */
     removeValue () {
 
         var value = this.value;
@@ -191,7 +214,9 @@ class Node {
     }
 
     /**
-     * @returns {boolean}
+     * Check if the node has a parent node
+     *
+     * @returns {Boolean}
      */
     hasParent () {
 
@@ -199,7 +224,9 @@ class Node {
     }
 
     /**
-     * @returns {(Node|undefined)}
+     * Get the parent node of a node
+     *
+     * @returns {(Node|undefined)} The parent node or undefined
      */
     getParent () {
 
@@ -207,7 +234,9 @@ class Node {
     }
 
     /**
-     * @param {Node} node
+     * Set the parent node of a node
+     *
+     * @param {Node} node The parent node
      */
     setParent (node) {
 
@@ -215,8 +244,10 @@ class Node {
     }
 
     /**
-     * @param {string} key
-     * @returns {boolean}
+     * Check if the node has a certain child node
+     *
+     * @param   {String}  key The key of the child node
+     * @returns {Boolean}
      */
     hasChild (key) {
 
@@ -224,8 +255,10 @@ class Node {
     }
 
     /**
-     * @param {string} key
-     * @returns {(Node|undefined)}
+     * Get a child node of a node
+     *
+     * @param   {String}           key The key of the child node
+     * @returns {(Node|undefined)} The child node or undefined
      */
     getChild (key) {
 
@@ -233,8 +266,10 @@ class Node {
     }
 
     /**
-     * @param {string} key
-     * @param {Node} node
+     * Set a child node
+     *
+     * @param {String} key  The key of the child node
+     * @param {Node}   node The child node
      */
     setChild (key, node) {
 
@@ -244,8 +279,10 @@ class Node {
     }
 
     /**
-     * @param {string} key
-     * @returns {(Node|undefined)}
+     * Remove a child node from a node
+     *
+     * @param   {String}           key The key of the child node
+     * @returns {(Node|undefined)} The removed child node or undefined
      */
     removeChild (key) {
 
@@ -262,12 +299,16 @@ class Node {
     }
 }
 
+/**
+ * @class ArrayNode
+ * @extends Node
+ */
 class ArrayNode extends Node {
 
     /**
-     * @constructor
+     * @constructs ArrayNode
      *
-     * @param {string} key
+     * @param {String} key
      * @param {*} value
      * @param {Node} [parent]
      */
@@ -276,6 +317,11 @@ class ArrayNode extends Node {
         super(key, value, parent);
     }
 
+    /**
+     * Set the value of a node
+     *
+     * @param {*} value The new value of the node
+     */
     setValue (value) {
 
         if (value === undefined) {
@@ -292,6 +338,11 @@ class ArrayNode extends Node {
         }
     }
 
+    /**
+     * Remove the value of a node
+     *
+     * @returns {*} The removed value of the node
+     */
     removeValue (value) {
 
         if (value !== undefined) {
