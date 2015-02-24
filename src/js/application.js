@@ -1,4 +1,4 @@
-//import HSM from './hierarchical-state-machine';
+import HSM from './hierarchical-state-machine';
 import * as Utils from './utils';
 import Request from './request';
 import Route from './route';
@@ -132,25 +132,25 @@ window.r = new Router({
 
 window.r.start();
 
-//window.hsm = new HSM({
-//    states: {
-//        home: {
-//            onEnter: function (params, substate) { console.log('welcome to home'); },
-//            onExit: function (params) { console.log('goodbye from home'); }
-//        },
-//        users: {
-//            onEnter: function (params, substate) { console.log('welcome to users'); },
-//            onExit: function (params) { console.log('goodbye from users'); },
-//            states: {
-//                list: {
-//                    onEnter: function (params, substate) { console.log('welcome to users.list'); },
-//                    onExit: function (params) { console.log('goodbye from users.list'); }
-//                },
-//                details: {
-//                    onEnter: function (params, substate) { console.log('welcome to users.details'); },
-//                    onExit: function (params) { console.log('goodbye from users.details'); }
-//                }
-//            }
-//        }
-//    }
-//});
+window.hsm = new HSM({
+    states: {
+        home: {
+            onEnter: function (params, substate) { console.log('welcome to home'); },
+            onExit: function (params) { console.log('goodbye from home'); }
+        },
+        users: {
+            onEnter: function (params, substate) { console.log('welcome to users'); },
+            onExit: function (params) { console.log('goodbye from users'); },
+            states: {
+                list: {
+                    onEnter: function (params, substate) { console.log('welcome to users.list'); },
+                    onExit: function (params) { console.log('goodbye from users.list'); }
+                },
+                details: {
+                    onEnter: function (params, substate) { console.log('welcome to users.details'); },
+                    onExit: function (params) { console.log('goodbye from users.details'); }
+                }
+            }
+        }
+    }
+});

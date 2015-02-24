@@ -11,7 +11,7 @@ class Router {
      *
      * @param {Object} [options={}]
      * @param {Object.<string, Object>} [options.routes]
-     * @param {string} [options.default]
+     * @param {String} [options.default]
      */
     constructor (options = {}) {
 
@@ -58,7 +58,7 @@ class Router {
     /**
      * Add or retrieve a route
      *
-     * @param {(string|Object|Route)} route
+     * @param {(String|Object|Route)} route
      * @returns {(Route|Router)}
      */
     route (route) {
@@ -87,12 +87,12 @@ class Router {
     /**
      * Activate a route
      * 
-     * @param {(string|Request)} route
+     * @param {(String|Request)} route
      * @param {Object} [options={}]
      * @param {Object} [options.params]
      * @param {Object} [options.query]
-     * @param {boolean} [options.trigger]
-     * @param {boolean} [options.replace]
+     * @param {Boolean} [options.trigger]
+     * @param {Boolean} [options.replace]
      */
     navigate (route, options = {}) {
         
@@ -200,7 +200,7 @@ class Router {
      * Get the current hash
      *
      * @static
-     * @returns {string}
+     * @returns {String}
      */
     static getHash () {
 
@@ -211,8 +211,8 @@ class Router {
      * Set a new hash
      *
      * @static
-     * @param {string} hash
-     * @param {boolean} [replace=false]
+     * @param {String} hash
+     * @param {Boolean} [replace=false]
      */
     static setHash (hash, replace = false) {
 

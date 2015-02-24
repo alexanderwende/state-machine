@@ -1,16 +1,19 @@
+/**
+ * @class HierarchicalStateMachine
+ */
 class HierarchicalStateMachine {
 
-    constructor (options) {
+    constructor (options = {}) {
 
         this.states = {};
 
-        this.parent = options && options.parent || null;
+        this.parent = options.parent || null;
 
-        this.current = options && options.current || null;
+        this.current = options.current || null;
 
-        this.default = options && options.default || null;
+        this.default = options.default || null;
 
-        if (options && options.states) {
+        if (options.states) {
 
             for (let name in options.states) {
 
@@ -19,6 +22,13 @@ class HierarchicalStateMachine {
         }
     }
 
+    /**
+     * Add or get a state
+     *
+     * @param   {(Object|String)} state  An object defining the state or the name of the state to retrieve
+     * @param   {String}          [name] The name of the state being added
+     * @returns {[[Type]]}        [[Description]]
+     */
     state (state, name) {
 
         switch (typeof state) {

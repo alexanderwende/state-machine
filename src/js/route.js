@@ -1,9 +1,17 @@
 import * as Utils from './utils';
 import Request from './request';
 
+/**
+ * @class Route
+ */
 class Route {
 
-    constructor (options) {
+    /**
+     * @constructs Route
+     *
+     * @param {Object} [options={}] An object containing options
+     */
+    constructor (options = {}) {
 
         var param;
 
@@ -118,10 +126,14 @@ class Route {
     }
 }
 
+/**
+ * @static
+ * @type {Object.<String, RegExp>}
+ */
 Route.Matchers = {
 
     Param: /:([\w]+)/gi
-}
+};
 
 
 

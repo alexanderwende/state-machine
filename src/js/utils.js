@@ -69,6 +69,12 @@ function extend (target, source, deep) {
     return target;
 }
 
+/**
+ * Turn array-like objects into arrays
+ *
+ * @param   {*}     source - An array-like object
+ * @returns {Array}
+ */
 function toArray (source) {
 
     var i, result = [];
