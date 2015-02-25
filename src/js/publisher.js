@@ -2,22 +2,35 @@ class Publisher {
 
     constructor (options) {
 
-        this._eventDelimiter = options && options.delimiter || '.';
-        this._eventWildcard = options && options.wildcard || '*';
-        this._events = {};
+        this._delimiter = options && options.delimiter || '.';
+        this._wildcard = options && options.wildcard || '*';
+        this._channels = {};
     }
 
-    ensure (event, key) {
+    _ensureChannel (key, parent) {
 
-        if (!event[key]) {
+        return parent[key] ? parent[key] : this._createChannel(key, parent);
+    }
 
-            event[key] = {
-                subscribers: [],
-                events: {}
-            }
+    _createChannel (key, parent) {
+
+        parent[key] = {
+            subscribers: [],
+            channels: {},
+            parent: parent
+        };
+
+        return parent[key];
+    }
+
+    _removeChannel (key, parent) {
+
+        if (parent[key]) {
+
+            parent[key].parent = undefined;
+
+            delete parent[key];
         }
-
-        return event[key];
     }
 
     /**
@@ -51,26 +64,17 @@ class Publisher {
      */
     subscribe (key, callback) {
 
-        var keys    = key.split(this._eventDelimiter),
+        var keys    = key.split(this._delimiter),
             length  = keys.length,
-            event   = this._events,
-            subscribers,
+            channel = this._channels,
             i;
 
         for (i = 0; i < length; i++) {
 
-            if (!event[keys[i]]) {
-                event[keys[i]] = {
-                    subscribers: [],
-                    events: {}
-                };
-            }
-
-            subscribers = this.ensure(event, keys[i]).subscribers;
-            event = event[keys[i]].events;
+            channel = this._ensureChannel(keys[i], channel);
         }
 
-        subscribers.push(callback);
+        channel.subscribers.push(callback);
     }
 
     /**
