@@ -1,9 +1,9 @@
-import EventDispatcher from './event-dispatcher';
+import EventEmitter from './event-emitter';
 
 /**
  * @class State
  */
-class State extends EventDispatcher {
+class State extends EventEmitter {
 
     /**
      * @constructs State
@@ -11,6 +11,8 @@ class State extends EventDispatcher {
      * @param {Object} [options={}] An options object
      */
     constructor (options = {}) {
+
+        super();
 
         /**
          * @type {Object.<String, State>}
