@@ -1,14 +1,34 @@
+/**
+ * @class EventEmitter
+ */
 class EventEmitter {
 
+    /**
+     * @constructs EventEmitter
+     */
     constructor () {
 
+        // iterating and modifying maps is more performant
+        // than iterating or modifying hot objects
         this._listeners = new Map();
     }
 
+    /**
+     * Add an event listener
+     *
+     * @param   {String}       event    The event name
+     * @param   {Function}     listener The event listener
+     * @returns {EventEmitter} The EventEmitter instance for chainability
+     */
     addListener (event, listener) {
 
         if (!this._listeners.has(event)) {
 
+            // iterating and modifying arrays is faster than
+            // iterating and modifying sets, but checking
+            // for duplicate entries is way more costly in arrays
+            // and therefore insert loops with checks perform slower
+            // with arrays
             this._listeners.set(event, new Set());
         }
 
@@ -17,6 +37,13 @@ class EventEmitter {
         return this;
     }
 
+    /**
+     * Remove an event listener
+     *
+     * @param   {String}   event    The event name
+     * @param   {Function} listener The event listener
+     * @returns {Boolean}  True if the listener was removed
+     */
     removeListener (event, listener) {
 
         if (!this._listeners.has(event)) {
@@ -27,21 +54,41 @@ class EventEmitter {
         return this._listeners.get(event).delete(listener);
     }
 
-    emit (event, args) {
+    /**
+     * Remove all event listeners
+     *
+     * @param   {String}  [event] An optional event name
+     * @returns {Boolean} True if the listeners were removed
+     */
+    removeAll (event) {
 
-        var listeners = this._listeners.get(event);
+        if (!event) {
 
-        if (listeners) {
+            return this._listeners.clear() || true;
+        }
 
-            // TODO: Fix this, re-scoping does not work!
-            let listeners = listeners.values(),
-                length = listeners.length,
-                i = 0;
+        if (this._listeners.has(event)) {
 
-            for (i; i < length; i++) {
+            return this._listeners.get(event).clear() || true;
+        }
 
-                listeners[i](args);
-            }
+        return false;
+    }
+
+    /**
+     * Emit an event
+     *
+     * @param {String} event     The event name
+     * @param {*}      [...args] Optional arguments to send with the event
+     */
+    emit (event, ...args) {
+
+        if (this._listeners.has(event)) {
+
+            this._listeners.get(event).forEach(function (listener) {
+
+                listener.call(null, event, ...args);
+            });
         }
     }
 }
