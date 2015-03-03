@@ -47,7 +47,7 @@ function render (template, data) {
         template = compile(template);
     }
 
-    // TODO: compile into function vs module
+    return template(data);
 }
 
 function translate (load) {
@@ -55,4 +55,4 @@ function translate (load) {
     load.source = compile(load.source);
 }
 
-export {config, compile, translate};
+export {config, compile, render, translate};

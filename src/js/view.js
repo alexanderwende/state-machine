@@ -1,27 +1,17 @@
+import EventEmitter from './event-emitter';
+import Dom from './dom';
+import {render} from './tpl';
 import * as utils from './utils';
 
 export default class View {
 
-    constructor (options) {
+    constructor (options = {}) {
 
-        this.options = {};
+        this.element = options.element || null;
 
-        this.setOptions(options);
-    }
+        this.template = options.template || this.template;
 
-    getOptions () {
-
-        return this.options;
-    }
-
-    setOptions (options) {
-
-        utils.extend(this.options, options);
-    }
-
-    getOption (option) {
-
-        return this.options ? this.options[option] : undefined;
+        this.isRendered = false;
     }
 
     getTemplate () {
@@ -34,11 +24,9 @@ export default class View {
         return this.scope;
     }
 
-    render () {
+    render (options = {}) {
 
-        this.element.innerHTML = this.getTemplate()(this.getScope());
-
-        this.onRender();
+        var html = this.getTemplate()(this.getScope());
     }
 
     onRender () {}
