@@ -16,21 +16,28 @@
     background-repeat: repeat;
 }
 
-html {
+* {
     margin: 0;
     padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+html {
     height: 100%;
     width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: unit(@base-font-size / @default-font-size * 100, %);
+    line-height: unit(@base-line-height / @base-font-size, em);
 }
 
 body {
-    margin: 0;
-    padding: 0;
     height: 100%;
     width: 100%;
-    font: percentage((@base-font-size / @default-font-size))/@base-line-height normal Arial, sans-serif;
     display: flex;
     flex-flow: column;
+    .set-font-size();
     .show-vertical-rhythm(1);
 }
 

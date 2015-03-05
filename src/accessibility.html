@@ -34,18 +34,37 @@
             </nav>
         </header>
         <section role="main">
-            <span class="listbox" role="listbox">
-                <label>Select something...</label>
-            </span>
+
+            <h1>User Interface Components</h1>
+
+            <section class="section-button">
+                <h2>Buttons</h2>
+            </section>
+
+            <section class="section-select">
+                <h2>Selects</h2>
+                <span class="listbox" role="listbox">
+                    <label>Select something...</label>
+                </span>
+            </section>
+
         </section>
         <footer>Copyright &copy; 2015 Alexander Wende</footer>
 
         <!-- build:js -->
         <script src="bower_components/less/dist/less-1.7.5.min.js"></script>
+        <script src="bower_components/traceur/traceur.min.js"></script>
+        <script src="/bower_components/traceur-runtime/traceur-runtime.min.js"></script>
+        <script src="/bower_components/es6-module-loader/dist/es6-module-loader.js"></script>
+        <script src="/bower_components/system.js/dist/system.js"></script>
         <!-- endbuild -->
         <script>
 
+            System.config({
+                baseURL: 'js'
+            });
 
+            System.import('accessibility').catch(console.error.bind(console));
 
         </script>
     </body>
