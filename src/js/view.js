@@ -3,7 +3,7 @@ import Dom from './dom';
 import {render} from './tpl';
 import * as utils from './utils';
 
-export default class View {
+export default class View extends EventEmiter {
 
     constructor (options = {}) {
 
@@ -27,6 +27,9 @@ export default class View {
     render (options = {}) {
 
         var html = this.getTemplate()(this.getScope());
+
+        this.onRender();
+        this.emit('render');
     }
 
     onRender () {}

@@ -1,0 +1,55 @@
+@default-font-size: 16px;
+@base-font-size: 14px;
+@base-line-height: 21px;
+
+.set-font-size (@size: @base-font-size, @lines: 1) {
+    font-size: unit(@size / @base-font-size, rem);
+    line-height: unit(@lines, rem);
+}
+
+.show-vertical-rhythm (@lines: 1) {
+    @height: @base-line-height * @lines;
+    @width: @height;
+    @stop: unit(100 - (100 / @height), %);
+    background-image: linear-gradient(to bottom, rgba(0,0,0,0) @stop, rgba(0,0,0,.1) @stop);
+    background-size: @height @width;
+    background-repeat: repeat;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font: percentage((@base-font-size / @default-font-size))/@base-line-height normal Arial, sans-serif;
+    display: flex;
+    flex-flow: column;
+    .show-vertical-rhythm(1);
+}
+
+ol, ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body > header {
+    flex: 0 0 auto;
+    .set-font-size(@base-font-size, 2);
+}
+
+body > section {
+    flex: 1 1 100%;
+}
+
+body > footer {
+    flex: 0 0 auto;
+    .set-font-size(12px);
+}
