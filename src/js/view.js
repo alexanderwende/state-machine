@@ -51,6 +51,8 @@ export default class View extends EventEmitter {
         this.onRender();
 
         this.emit('render');
+
+        return this;
     }
 
     onRender () {}

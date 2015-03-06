@@ -23,14 +23,20 @@
  *
  */
 
+/**
+ * A string which can be a selector or HTML markup, a Node or Element or NodeList or an Array of the former.
+ *
+ * @typedef {(String|EventTarget|Node|Element|NodeList|Array|DOMQuery)} QueryInput
+ */
+
 class DOMQuery extends Array {
 
     /**
      * Create a new DOMQuery
      *
      * @constructor
-     * @param {string|EventTarget|NodeList|Array} selector
-     * @param {EventTarget|NodeList|Array} context
+     * @param {QueryInput} selector
+     * @param {(EventTarget|NodeList|Array)} context
      * @returns {DOMQuery}
      */
     constructor (selector, context) {
@@ -80,13 +86,37 @@ class DOMQuery extends Array {
     /**
      * Create a new DOMQuery with the current query being the context
      *
-     * @param {string|EventTarget|NodeList|Array} selector
+     * @param {QueryInput} selector
      * @returns {DOMQuery}
      */
     find (selector) {
 
         return DOMQuery(selector, this);
     }
+
+    /**
+     * Test equality of two DOM selections
+     *
+     * @param {(string|Node|NodeList|Array|DOM)} selector
+     * @returns {boolean}
+     */
+    is (selector) {
+
+        selector = (selector instanceof DOMQuery) ? selector : new DOMQuery(selector);
+
+        if (this.length === selector.length) {
+
+            for (let i = this.length; i--;) {
+
+                if (this[i] !== selector[i]) { return false; }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
 
     /**
      * Clone a DOMQuery
@@ -104,7 +134,12 @@ class DOMQuery extends Array {
             // the cloneNode method is part of the Node interface
             if (node instanceof Node) {
 
-                 clone[i] = node.cloneNode(true);
+                clone[i] = node.cloneNode(true);
+            }
+            // make sure window gets copied when cloning (not a node)
+            else {
+
+                clone[i] = node;
             }
         }
 
@@ -251,9 +286,76 @@ class DOMQuery extends Array {
         return this;
     }
 
-    append (html) {}
+    /**
+     * Get the value of a form element
+     *
+     * @returns {string}
+     */
+    value () {
 
-    insert (html) {}
+        var element = this[0];
+        var value = "";
+
+        if (element instanceof HTMLSelectElement) {
+            value = element.value;
+        }
+        else if (element instanceof HTMLTextAreaElement) {
+            value = element.value;
+        }
+        else if (element instanceof HTMLInputElement) {
+            value = element.value;
+        }
+
+        return value;
+    }
+
+    /**
+     * Append content to a DOMQuery
+     *
+     * @param   {QueryInput} content The content to append
+     * @returns {DOMQuery}   The DOMQuery
+     */
+    append (content) {
+
+        var i, length;
+
+        // if content is a string, it can be html or a selector
+        // so we create a new DOMQuery instance to cover these cases
+        if (typeof content === 'string') {
+            return this.append(new DOMQuery(content));
+        }
+
+        content = DOMQuery.createDocumentFragment(content);
+
+        for (i = 1, length = this.length; i < length; i++) {
+            // clone the content for multiple targets
+            this[i].appendChild(content.cloneNode(true));
+        }
+
+        // append the original content to the first target
+        this[0].appendChild(content);
+
+        return this;
+    }
+
+    /**
+     * Insert content into a DOMQuery
+     *
+     * @param   {QueryInput} content The content to insert
+     * @returns {DOMQuery}   The DOMQuery
+     */
+    insert (content) {
+
+        // if content is an html string, innerHTML has best performance
+        if (typeof content === "string" && DOMQuery.isHTML(content)) {
+
+            for (var i = this.length; i--; this[i].innerHTML = content);
+
+            return this;
+        }
+
+        return this.empty().append(content);
+    }
 
     /**
      * Remove a DOMQuery from the DOM
@@ -395,6 +497,58 @@ class DOMQuery extends Array {
     static isHTML (html) {
 
         return (html[0] === "<" && html[html.length - 1] === ">" && html.length > 2);
+    }
+
+    /**
+     * Convert an HTML string or DOM section into a DocumentFragment
+     *
+     * @static
+     * @param {(string|Node|NodeList|Array)} html
+     * @returns {DocumentFragment}
+     */
+    static createDocumentFragment (html) {
+
+        var fragment = document.createDocumentFragment(),
+            helper,
+            length,
+            i;
+
+        if (typeof html === "string") {
+
+            helper = document.createElement('div');
+            helper.innerHTML = html;
+
+            while (helper.firstChild) {
+                fragment.appendChild(helper.firstChild);
+            }
+        }
+        else {
+            // node lists can be live (meaning they change when items are moved,
+            // or non-live (meaning they don't change) so we need to make an array
+            // out of them for more predictability
+            html = (html instanceof NodeList) ? Utils.toArray(html) : html;
+
+            // DOM inherits from Array, so DOM instances are also Arrays
+            if (html instanceof Array) {
+
+                length = html.length;
+
+                for (i = 0; i < length; fragment.appendChild(html[i++]));
+            }
+            else {
+
+                if (html.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+
+                    fragment = html;
+                }
+                else {
+
+                    fragment.appendChild(html);
+                }
+            }
+        }
+
+        return fragment;
     }
 }
 

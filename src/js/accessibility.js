@@ -1,5 +1,6 @@
 import buttonTemplate from './templates/button.ejs!tpl';
 import Dom from './dom';
+import Region from './region';
 import View from './view';
 
 class ButtonView extends View {
@@ -12,16 +13,19 @@ class ButtonView extends View {
     }
 }
 
-window.button = new ButtonView();
+var app = {
+    regions: {
+        button: new Region({element: '.region-button'}),
+        select: new Region({element: '.region-select'})
+    },
+    start: function () {
+        this.regions.button.show(new ButtonView({scope: {label: 'Button', class: 'myClass'}}));
+    },
+    stop: function () {
+        this.regions.button.destroy();
+    }
+};
 
-button.render({
-    label: 'Button',
-    class: 'button'
-});
+app.start();
 
-document.querySelector('.section-button').innerHTML = button.html;
-
-//buttonTemplate({
-//    label: 'Button',
-//    class: 'button'
-//});
+window.app = app;

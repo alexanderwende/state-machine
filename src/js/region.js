@@ -5,9 +5,11 @@ class Region extends EventEmitter {
 
     constructor (options = {}) {
 
-        this.selector = options.selector || null;
-        this.element = options.element || null;
-        this.current = null;
+        super();
+
+        this.element = options.element ? dom(options.element) : null;
+
+        this.currentView = null;
     }
 
     show (view) {
@@ -16,14 +18,21 @@ class Region extends EventEmitter {
 
         this.element.append(view.isRendered ? view.element : view.render().element);
 
-        this.current = view;
+        this.currentView = view;
 
-        this.emit('show');
+        this.emit('show', view);
     }
 
     destroy () {
 
+        if (this.currentView) {
 
+            this.currentView.destroy();
+        }
+
+        this.element.empty();
+
+        this.emit('destroy');
     }
 }
 
