@@ -1,3 +1,5 @@
+import * as utils from './utils';
+
 /**
  * DOM class hierarchy:
  *
@@ -43,6 +45,7 @@ class DOMQuery extends Array {
 
         var i, result;
 
+        // the selector can either be an html string or an actual selector string
         if (typeof selector === 'string') {
 
             if (DOMQuery.isHTML(selector)) {
@@ -53,6 +56,7 @@ class DOMQuery extends Array {
             return DOMQuery.query(selector, context);
         }
 
+        // this allows DOMQuery to be called as a function
         if (!(this instanceof DOMQuery)) {
 
             return new DOMQuery(selector, context);
@@ -322,7 +326,8 @@ class DOMQuery extends Array {
         // if content is a string, it can be html or a selector
         // so we create a new DOMQuery instance to cover these cases
         if (typeof content === 'string') {
-            return this.append(new DOMQuery(content));
+
+            content = new DOMQuery(content);
         }
 
         content = DOMQuery.createDocumentFragment(content);
@@ -474,18 +479,7 @@ class DOMQuery extends Array {
      */
     static parse (html) {
 
-        var temp, result;
-
-        temp = document.createElement('div');
-        temp.innerHTML = html;
-
-        result = new this(temp.childNodes);
-
-        while(temp.lastChild) {
-            temp.removeChild(temp.lastChild);
-        }
-
-        return result;
+        return new this(this.createDocumentFragment(html));
     }
 
     /**
@@ -496,6 +490,8 @@ class DOMQuery extends Array {
      */
     static isHTML (html) {
 
+        html = html.trim();
+
         return (html[0] === "<" && html[html.length - 1] === ">" && html.length > 2);
     }
 
@@ -503,7 +499,7 @@ class DOMQuery extends Array {
      * Convert an HTML string or DOM section into a DocumentFragment
      *
      * @static
-     * @param {(string|Node|NodeList|Array)} html
+     * @param {QueryInput} html
      * @returns {DocumentFragment}
      */
     static createDocumentFragment (html) {
@@ -513,38 +509,27 @@ class DOMQuery extends Array {
             length,
             i;
 
-        if (typeof html === "string") {
+        if (typeof html === 'string') {
 
             helper = document.createElement('div');
             helper.innerHTML = html;
 
             while (helper.firstChild) {
+
                 fragment.appendChild(helper.firstChild);
             }
         }
         else {
-            // node lists can be live (meaning they change when items are moved,
-            // or non-live (meaning they don't change) so we need to make an array
-            // out of them for more predictability
-            html = (html instanceof NodeList) ? Utils.toArray(html) : html;
 
-            // DOM inherits from Array, so DOM instances are also Arrays
-            if (html instanceof Array) {
+            if (html instanceof DocumentFragment) {
 
-                length = html.length;
-
-                for (i = 0; i < length; fragment.appendChild(html[i++]));
+                fragment = html;
             }
             else {
 
-                if (html.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+                html = new DOMQuery(html);
 
-                    fragment = html;
-                }
-                else {
-
-                    fragment.appendChild(html);
-                }
+                for (i = 0, length = html.length; i < length; fragment.appendChild(html[i++]));
             }
         }
 

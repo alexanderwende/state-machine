@@ -29,3 +29,4 @@ var app = {
 app.start();
 
 window.app = app;
+window.DOMQuery = Dom;
