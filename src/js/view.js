@@ -57,7 +57,17 @@ export default class View extends EventEmitter {
 
     onRender () {}
 
-    destroy () {}
+    show () {
+
+        this.emit('show');
+    }
+
+    onShow () {}
+
+    destroy () {
+
+        this.element.remove();
+    }
 
     onDestroy () {}
 }
