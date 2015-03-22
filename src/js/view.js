@@ -1,4 +1,5 @@
 import EventEmitter from './event-emitter';
+import Behavior from './behavior';
 import dom from './dom';
 import * as utils from './utils';
 import * as tpl from './tpl';
@@ -6,6 +7,8 @@ import * as tpl from './tpl';
 export default class View extends EventEmitter {
 
     constructor (options = {}) {
+
+        this.options = options;
 
         super();
 
@@ -18,7 +21,48 @@ export default class View extends EventEmitter {
         this.html = '';
 
         this.isRendered = false;
+
+        this.regions;
+        this.elements;
+        this.events;
+        this.behaviors;
     }
+
+    /**
+     * Add a behavior to the view instance
+     *
+     * A behavior can be a Behavior instance or an options object
+     *
+     * @param {(Object|Function)} behavior The behavior to add
+     */
+    addBehavior (behavior) {
+
+        if (!(behavior instanceof Behavior)) {
+
+            let behaviorClass = behavior.behaviorClass || Behavior;
+
+            behavior.host = this;
+
+            behavior = new behaviorClass(behavior);
+        }
+
+        this.behaviors.push(behavior);
+
+        // bind host events
+        behavior._bindHostEvents();
+
+        // bind data events
+        behavior._bindDataEvents();
+
+        if (this.isRendered) {}
+
+        if (this.isShown) {
+            // bind dom events
+            behavior._bindDomEvents();
+        }
+    }
+
+    addRegion (region) {}
 
     getTemplate () {
 
