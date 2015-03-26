@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="description" content="Accessible Components">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Views</title>
+
+        <!-- Add to homescreen for Chrome on Android -->
+        <meta name="mobile-web-app-capable" content="yes">
+        <!--link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png"-->
+
+        <!-- Add to homescreen for Safari on iOS -->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Accessible Components">
+        <!--link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png"-->
+
+        <!-- Tile icon for Win8 (144x144 + tile color) -->
+        <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+        <meta name="msapplication-TileColor" content="#3372DF">
+
+        <!-- build:css -->
+        <link rel="stylesheet/less" type="text/css" href="less/accessibility.less" />
+        <!-- endbuild -->
+    </head>
+    <body role="application">
+        <header></header>
+        <main role="main" id="main"></main>
+        <footer>Copyright &copy; 2015 Alexander Wende</footer>
+
+        <!-- build:js -->
+        <script src="bower_components/less/dist/less-1.7.5.min.js"></script>
+        <script src="bower_components/traceur/traceur.min.js"></script>
+        <script src="/bower_components/traceur-runtime/traceur-runtime.min.js"></script>
+        <script src="/bower_components/es6-module-loader/dist/es6-module-loader.js"></script>
+        <script src="/bower_components/system.js/dist/system.js"></script>
+        <!-- endbuild -->
+        <script>
+
+            System.config({
+                baseURL: 'js'
+            });
+
+            System.import('application-views').catch(console.error.bind(console));
+
+        </script>
+    </body>
+</html>

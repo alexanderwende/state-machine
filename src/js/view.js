@@ -1,5 +1,6 @@
 import EventEmitter from './event-emitter';
-import Behavior from './behavior';
+//import Behavior from './behavior';
+import Region from './region';
 import dom from './dom';
 import * as utils from './utils';
 import * as tpl from './tpl';
@@ -35,38 +36,94 @@ export default class View extends EventEmitter {
      *
      * @param {(Object|Function)} behavior The behavior to add
      */
-    addBehavior (behavior) {
+//    addBehavior (behavior) {
+//
+//        if (!(behavior instanceof Behavior)) {
+//
+//            let behaviorClass = behavior.behaviorClass || Behavior;
+//
+//            behavior.host = this;
+//
+//            behavior = new behaviorClass(behavior);
+//        }
+//
+//        this.behaviors.push(behavior);
+//
+//        // bind host events
+//        behavior._bindHostEvents();
+//
+//        // bind data events
+//        behavior._bindDataEvents();
+//
+//        if (this.isRendered) {}
+//
+//        if (this.isShown) {
+//            // bind dom events
+//            behavior._bindDomEvents();
+//        }
+//    }
 
-        if (!(behavior instanceof Behavior)) {
-
-            let behaviorClass = behavior.behaviorClass || Behavior;
-
-            behavior.host = this;
-
-            behavior = new behaviorClass(behavior);
-        }
-
-        this.behaviors.push(behavior);
-
-        // bind host events
-        behavior._bindHostEvents();
-
-        // bind data events
-        behavior._bindDataEvents();
-
-        if (this.isRendered) {}
-
-        if (this.isShown) {
-            // bind dom events
-            behavior._bindDomEvents();
-        }
-    }
-
-    addRegion (region) {}
+//    addRegion (region) {}
 
     getTemplate () {
 
         return this.template;
+    }
+
+    bindRegions () {
+
+        if (this.regions) {
+
+            for (let name in this.regions) {
+
+                this.regions[name] = new Region({element: this.regions[name]});
+            }
+        }
+    }
+
+    unbindRegions () {
+
+        if (this.regions) {
+
+            for (let name in this.regions) {
+
+                this.regions[name].destroy();
+            }
+        }
+    }
+
+    bindEvents () {
+
+        if (this.events) {
+
+            for (let i = 0, length = this.events.length; i < length; i++) {
+
+                let event = this.events[i];
+
+                event.element = dom(event.element);
+                event.listener = typeof event.listener === 'function' ? event.listener : this[event.listener].bind(this);
+
+                event.element.on(event.event, event.listener);
+            }
+        }
+    }
+
+    unbindEvents () {
+
+        if (this.events) {
+
+            for (let i = 0, length = this.events.length; i < length; i++) {
+
+                let event = this.events[i];
+
+                event.element.off(event.event, event.listener);
+            }
+        }
+    }
+
+    getRegion (name) {
+
+        return this.regions[name];
     }
 
     getScope () {
@@ -92,6 +149,10 @@ export default class View extends EventEmitter {
 
         this.element = dom(this.html);
 
+        this.isRendered = true;
+
+        this.bindRegions();
+
         this.onRender();
 
         this.emit('render');
@@ -101,16 +162,45 @@ export default class View extends EventEmitter {
 
     onRender () {}
 
-    show () {
+    show (parent) {
+
+        this.parent = dom(parent);
+
+        if (parent.hasChildNodes()) {
+
+            this.bindRegions();
+        }
+        else {
+            if (!this.isRendered) {
+
+                this.render();
+            }
+
+            this.parent.append(this.element);
+        }
+
+        this.bindEvents();
+
+        this.onShow();
 
         this.emit('show');
+
+        return this;
     }
 
     onShow () {}
 
     destroy () {
 
+        this.unbindEvents();
+
+        this.unbindRegions();
+
         this.element.remove();
+
+        this.onDestroy();
+
+        this.emit('destroy');
     }
 
     onDestroy () {}

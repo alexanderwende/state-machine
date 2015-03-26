@@ -38,7 +38,7 @@ body {
     display: flex;
     flex-flow: column;
     .set-font-size();
-    .show-vertical-rhythm(1);
+//    .show-vertical-rhythm(1);
 }
 
 ol, ul, li {
@@ -52,11 +52,12 @@ body > header {
     .set-font-size(@base-font-size, 2);
 }
 
-body > section {
+body > main {
     flex: 1 1 100%;
 }
 
 body > footer {
     flex: 0 0 auto;
     .set-font-size(12px);
+    text-align: center;
 }

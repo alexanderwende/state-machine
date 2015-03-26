@@ -14,7 +14,10 @@ class Region extends EventEmitter {
 
     show (view) {
 
-        this.element.empty();
+        if (this.currentView) {
+
+            this.currentView.destroy();
+        }
 
         this.element.append(view.isRendered ? view.element : view.render().element);
 
@@ -29,8 +32,6 @@ class Region extends EventEmitter {
 
             this.currentView.destroy();
         }
-
-        this.element.empty();
 
         this.emit('destroy');
     }
