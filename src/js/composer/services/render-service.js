@@ -1,16 +1,10 @@
-import Service from '../service';
 import TemplateService from './template-service';
 
-class RenderService extends Service {
+var RenderService = {
 
-    constructor (options) {
+    name: 'render',
 
-        options.name = 'render';
-
-        super(options);
-    }
-
-    render (template, data) {
+    render: function (template, data) {
 
         return TemplateService.render(template, data);
     }

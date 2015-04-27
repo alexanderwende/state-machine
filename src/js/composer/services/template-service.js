@@ -1,25 +1,19 @@
-import Service from '../service';
 
-var config = {
-    evaluate: /<%([\s\S]+?)%>/g,
-    interpolate: /<%=([\s\S]+?)%>/g,
-    scopeName: 'scope'
-};
+var TemplateService = {
 
-class TemplateService extends Service {
+    name: 'template',
 
-    constructor (options) {
+    config: {
+        evaluate: /<%([\s\S]+?)%>/g,
+        interpolate: /<%=([\s\S]+?)%>/g,
+        scopeName: 'scope'
+    },
 
-        options.name = 'template';
-
-        super(options);
-    }
-
-    compile (template) {
+    compile: function (template) {
 
         var matcher = new RegExp([
-            config.interpolate.source,
-            config.evaluate.source
+            this.config.interpolate.source,
+            this.config.evaluate.source
         ].join('|') + '|$', 'g');
 
         var code = '',
@@ -49,21 +43,18 @@ class TemplateService extends Service {
 
         code = "try{\nvar __p='',__t;\n__p+='" + code + "';\nreturn __p;\n}catch(e){throw new Error('Template error.')}";
 
-        return 'export default function template (' + config.scopeName + ') {' + code + '};';
-    }
+        return 'export default function template (' + this.config.scopeName + ') {' + code + '};';
+    },
 
-    render (template, data) {
+    render: function (template, data) {
 
         if (typeof template === 'string') {
-            template = compile(template);
+
+            template = this.compile(template);
         }
 
         return template(data);
     }
+};
 
-    translate (load) {
-
-        load.source = compile(load.source);
-    }
-}
-export {config, compile, render, translate};
+export default TemplateService;
