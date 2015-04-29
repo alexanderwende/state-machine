@@ -1,4 +1,7 @@
 import EventEmitter from './event-emitter';
+import Behavior from './behavior';
+import dom from './services/dom-service';
+import utils from './services/utility-service';
 
 class Component extends EventEmitter {
 
@@ -6,23 +9,13 @@ class Component extends EventEmitter {
 
         super(options);
 
-        this._components = {};
-
-        this._behaviors = {};
-
-        this._events = ['init', 'start', 'render', 'stop', 'destroy'];
-
-        this.id = options.id !== undefined ? options.id : this.constructor.getNextId();
-
-        this.element = options.element;
-
         this.init(options);
     }
 
     /**
      * Add or get a component
      *
-     * @param   {Object|String} component     A component instance, component options or component name
+     * @param   {Object|String} component     A component instance, component options or component id
      * @param   {String}        [componentId] A component id
      * @returns {Component}     The component with the specified id or itself
      */
@@ -34,23 +27,36 @@ class Component extends EventEmitter {
 
                 if (!(component instanceof Component)) {
 
-                    component = new Component(component);
+                    let componentClass = component.componentClass;
+                    let componentOptions = (typeof component.componentOptions === 'function') ? component.componentOptions(this) : component.componentOptions;
+
+                    if (componentId !== undefined) {
+
+                        componentOptions.id = componentId;
+                    }
+
+                    component = new componentClass(componentOptions);
                 }
 
-                component.id = componentId !== undefined ? componentId : component.id;
-
-                this._components[component.id] = component;
+                this.components[component.id] = component;
 
                 break;
 
             case 'string':
 
-                return this._components[component];
+                return this.components[component];
         }
 
         return this;
     }
 
+    /**
+     * Add or get a behavior
+     *
+     * @param   {Object|String}      behavior   A behavior instance, behavior options or a behavior id
+     * @param   {String}             behaviorId A behavior id
+     * @returns {Behavior|Component} The behavior with the specified id or itself
+     */
     behavior (behavior, behaviorId) {
 
         switch (typeof behavior) {
@@ -59,10 +65,18 @@ class Component extends EventEmitter {
 
                 if (!(behavior instanceof Behavior)) {
 
-                    behavior = new Behavior(behavior);
-                }
+                    let behaviorClass = behavior.behaviorClass || Behavior;
+                    let behaviorOptions = ((typeof behavior.behaviorOptions === 'function') ? behavior.behaviorOptions(this) : behavior.behaviorOptions) || {};
 
-                behavior.id = behaviorId !== undefined ? behaviorId : behavior.id;
+                    if (behaviorId !== undefined) {
+
+                        behaviorOptions.id = behaviorId;
+                    }
+
+                    behaviorOptions.host = this;
+
+                    behavior = new behaviorClass(behaviorOptions);
+                }
 
                 this._behaviors[behavior.id] = behavior;
 
@@ -77,36 +91,76 @@ class Component extends EventEmitter {
     }
 
     // lifecycle methods
-    init (options, done) {
 
-        if (typeof done === 'function') {
+    init (options) {
 
-            done(this.emit.bind(this, 'init', options));
-        }
-        else {
+        console.log('component.init()...');
 
-            this.emit('init', options);
-        }
+        utils.extend(this, options);
+
+        this.options = options;
+
+        this.id = this.id !== undefined ? this.id : this.constructor.getNextId();
+
+        this.element = this.element !== undefined ? dom.select(this.element) : dom.select('body');
+
+        this._behaviors = {};
+
+        this._components = {};
+
+        utils.each(['init', 'start', 'render', 'stop', 'destroy'], function (event) {
+
+            let listener = this['on' + utils.capitalize(event)];
+
+            if (typeof listener === 'function') {
+
+                this.addListener(event, listener.bind(this));
+            }
+
+        }, this);
+
+        utils.each(this.behaviors, function (behavior, key) {
+
+            this.behavior(behavior, key);
+
+        }, this);
+
+        utils.each(this.components, function (component, key) {
+
+            this.component(component, key);
+
+        }, this);
+
+        this.emit('init');
     }
 
-    onInit (options, done) {
+    onInit (options) {}
 
+    start (options) {
 
+        this.emit('start');
     }
-
-    start () {}
 
     onStart () {}
 
-    render () {}
+    render (options) {
+
+        this.emit('render');
+    }
 
     onRender () {}
 
-    stop () {}
+    stop (options) {
+
+        this.emit('stop');
+    }
 
     onStop () {}
 
-    destroy () {}
+    destroy (options) {
+
+        this.emit('destroy');
+    }
 
     onDestroy () {}
 }

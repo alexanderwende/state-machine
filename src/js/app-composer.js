@@ -1,6 +1,8 @@
 import dom from './composer/services/dom-service';
+import utils from './composer/services/utility-service';
 import template from './templates/layout.ejs!tpl';
 
+import Component from './composer/component';
 import Behavior from './composer/behavior';
 
 (function (window) {
@@ -10,15 +12,41 @@ import Behavior from './composer/behavior';
     console.log('loaded...');
 
     window.dom = dom;
+    window.utils = utils;
     window.template = template;
 
-    window.behavior = new Behavior({
-        host: {
-            element: dom.select('#app')
-        },
-        events: [
-            {target: 'li > a', type: 'click', listener: function (event) { console.log('click-clack...'); event.preventDefault(); }}
-        ]
+    class ClickBehavior extends Behavior {
+
+        _onClick (event) {
+
+            event.preventDefault();
+
+            console.log('click-clack...');
+        }
+    }
+
+    ClickBehavior.defaultOptions = {
+        events: [{ target: 'li > a', type: 'click', listener: '_onClick' }]
+    };
+
+    class App extends Component {
+
+        constructor (options) {
+
+            this.behaviors = {
+                click: {
+                    behaviorClass: ClickBehavior
+                }
+            };
+
+            super(options);
+        }
+    }
+
+    window.app = new App({
+        element: dom.select('#app')
     });
+
+    window.app.start();
 
 })(window);
