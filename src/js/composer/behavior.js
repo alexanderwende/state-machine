@@ -158,27 +158,27 @@ class Behavior {
 
     onInit (event) {
 
-        console.log('behavior.onInit()... %o', event);
+        console.log('%s behavior.onInit()... %o', this.id, event);
     }
 
     onStart () {
 
-        console.log('behavior.onStart()...');
+        console.log('%s behavior.onStart()...', this.id);
     }
 
     onRender () {
 
-        console.log('behavior.onRender()...');
+        console.log('%s behavior.onRender()...', this.id);
     }
 
     onStop () {
 
-        console.log('behavior.onStop()...');
+        console.log('%s behavior.onStop()...', this.id);
     }
 
     onDestroy () {
 
-        console.log('behavior.onDestroy()...');
+        console.log('%s behavior.onDestroy()...', this.id);
     }
 }
 

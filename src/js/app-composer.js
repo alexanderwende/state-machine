@@ -5,6 +5,7 @@ import template from './templates/layout.ejs!tpl';
 import Component from './composer/component';
 import Behavior from './composer/behavior';
 import RenderBehavior from './composer/behaviors/render-behavior';
+import DomBehavior from './composer/behaviors/dom-behavior';
 
 (function (window) {
 
@@ -16,7 +17,7 @@ import RenderBehavior from './composer/behaviors/render-behavior';
     window.utils = utils;
     window.template = template;
 
-    class ClickBehavior extends Behavior {
+    class ClickBehavior extends DomBehavior {
 
         _onClick (event) {
 
@@ -27,7 +28,7 @@ import RenderBehavior from './composer/behaviors/render-behavior';
     }
 
     ClickBehavior.defaultOptions = {
-        events: [{ target: 'li > a', type: 'click', listener: '_onClick' }]
+        domEvents: [{ target: 'li > a', type: 'click', listener: '_onClick' }]
     };
 
     class App extends Component {}

@@ -79,7 +79,7 @@ class DomWrapper {
         return DomService.addEventListener(this, event, listener, useCapture);
     }
 
-    removeEventListener() {
+    removeEventListener(event, listener, useCapture) {
 
         return DomService.removeEventListener(this, event, listener, useCapture);
     }
