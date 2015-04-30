@@ -111,6 +111,21 @@ class Behavior {
         return this;
     }
 
+    addListener (type, listener) {
+
+        return this.host.addListener(type, listener);
+    }
+
+    removeListener (type, listener) {
+
+        return this.host.removeListener(type, listener);
+    }
+
+    emit (type, data) {
+
+        return this.host.emit(type, data);
+    }
+
     init (options) {
 
         console.log('behavior.init()...');
@@ -134,16 +149,16 @@ class Behavior {
 
         }, this);
 
-        utils.each(this.behaviors, function (behavior, key) {
+        utils.each(this.behaviors, function (behavior) {
 
-            this.behavior(behavior, key);
+            this.behavior(behavior);
 
         }, this);
     }
 
-    onInit () {
+    onInit (event) {
 
-        console.log('behavior.onInit()...');
+        console.log('behavior.onInit()... %o', event);
     }
 
     onStart () {
@@ -153,7 +168,7 @@ class Behavior {
 
     onRender () {
 
-        console.log('behavior.onStart()...');
+        console.log('behavior.onRender()...');
     }
 
     onStop () {

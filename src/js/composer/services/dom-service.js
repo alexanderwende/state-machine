@@ -54,6 +54,26 @@ class DomWrapper {
     setAttribute () {}
     removeAttribute () {}
 
+    append (content) {
+
+        return DomService.append(content, this);
+    }
+
+    insert (content) {
+
+        return DomService.insert(content, this);
+    }
+
+    remove () {
+
+        return DomService.remove(this);
+    }
+
+    empty () {
+
+        return DomService.empty(this);
+    }
+
     addEventListener (event, listener, useCapture) {
 
         return DomService.addEventListener(this, event, listener, useCapture);
@@ -147,9 +167,14 @@ var DomService = {
      */
     isHTML: function (html) {
 
-        html = html.trim();
+        if (typeof html === 'string') {
 
-        return (html[0] === "<" && html[html.length - 1] === ">" && html.length > 2);
+            html = html.trim();
+
+            return (html[0] === "<" && html[html.length - 1] === ">" && html.length > 2);
+        }
+
+        return false;
     },
 
     /**
@@ -194,6 +219,72 @@ var DomService = {
         }
 
         return fragment;
+    },
+
+    append: function (content, target) {
+
+        content = this.createDocumentFragment(content);
+
+        target = (target instanceof DomWrapper) ? target : this.select(target);
+
+        utils.each(target.elements, function (target) {
+
+            target.appendChild(content.cloneNode(true));
+        });
+
+        return target;
+    },
+
+    insert: function (content, target) {
+
+        content = this.createDocumentFragment(content);
+
+        target = (target instanceof DomWrapper) ? target : this.select(target);
+
+        utils.each(target.elements, function (target) {
+
+            this.empty(target).append(content);
+
+        }, this);
+
+        return target;
+    },
+
+    remove: function (element) {
+
+        element = (element instanceof DomWrapper) ? element : this.select(element);
+
+        utils.each(element.elements, function (element) {
+
+            if (element.parentNode) {
+
+                element.parentNode.removeChild(element);
+            }
+        });
+
+        return element;
+    },
+
+    empty: function (element) {
+
+        element = (element instanceof DomWrapper) ? element : this.select(element);
+
+        utils.each(element.elements, function (element) {
+
+            if (element instanceof Element) {
+
+                element.innerHTML = '';
+            }
+            else if (element instanceof Node) {
+
+                while (element.firstChild) {
+
+                    element.removeChild(element.firstChild);
+                }
+            }
+        });
+
+        return element;
     },
 
     /**

@@ -45,6 +45,10 @@ class Component extends EventEmitter {
             case 'string':
 
                 return this.components[component];
+
+            default:
+
+                throw new TypeError('component has to be an object or string');
         }
 
         return this;
@@ -85,6 +89,10 @@ class Component extends EventEmitter {
             case 'string':
 
                 return this._behaviors[behavior];
+
+            default:
+
+                throw new TypeError('behavior has to be an object or string');
         }
 
         return this;
@@ -96,9 +104,9 @@ class Component extends EventEmitter {
 
         console.log('component.init()...');
 
-        utils.extend(this, options);
+        this.options = utils.extend(this.constructor.defaultOptions, options);
 
-        this.options = options;
+        utils.extend(this, this.options);
 
         this.id = this.id !== undefined ? this.id : this.constructor.getNextId();
 
@@ -119,50 +127,65 @@ class Component extends EventEmitter {
 
         }, this);
 
-        utils.each(this.behaviors, function (behavior, key) {
+        utils.each(this.behaviors, function (behavior) {
 
-            this.behavior(behavior, key);
+            this.behavior(behavior);
 
         }, this);
 
-        utils.each(this.components, function (component, key) {
+        utils.each(this.components, function (component) {
 
-            this.component(component, key);
+            this.component(component);
 
         }, this);
 
         this.emit('init');
     }
 
-    onInit (options) {}
+    onInit (event) {
+
+        console.log('component.onInit()... %o', event);
+    }
 
     start (options) {
 
         this.emit('start');
     }
 
-    onStart () {}
+    onStart () {
+
+        console.log('component.onStart()... %o', event);
+    }
 
     render (options) {
 
         this.emit('render');
     }
 
-    onRender () {}
+    onRender () {
+
+        console.log('component.onRender()... %o', event);
+    }
 
     stop (options) {
 
         this.emit('stop');
     }
 
-    onStop () {}
+    onStop () {
+
+        console.log('component.onStop()... %o', event);
+    }
 
     destroy (options) {
 
         this.emit('destroy');
     }
 
-    onDestroy () {}
+    onDestroy () {
+
+        console.log('component.onDestroy()... %o', event);
+    }
 }
 
 Component._nextId = 0;
@@ -171,5 +194,9 @@ Component.getNextId = function () {
 
     return this._nextId++;
 }
+
+Component.defaultOptions = {
+    events: ['init', 'start', 'render', 'stop', 'destroy']
+};
 
 export default Component;

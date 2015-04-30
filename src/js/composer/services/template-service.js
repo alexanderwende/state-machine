@@ -46,12 +46,7 @@ var TemplateService = {
         return 'export default function template (' + this.config.scopeName + ') {' + code + '};';
     },
 
-    render: function (template, data) {
-
-        if (typeof template === 'string') {
-
-            template = this.compile(template);
-        }
+    render: function (template, data = {}) {
 
         return template(data);
     }

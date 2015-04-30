@@ -4,6 +4,7 @@ import template from './templates/layout.ejs!tpl';
 
 import Component from './composer/component';
 import Behavior from './composer/behavior';
+import RenderBehavior from './composer/behaviors/render-behavior';
 
 (function (window) {
 
@@ -29,18 +30,19 @@ import Behavior from './composer/behavior';
         events: [{ target: 'li > a', type: 'click', listener: '_onClick' }]
     };
 
-    class App extends Component {
+    class App extends Component {}
 
-        constructor (options) {
-
-            this.behaviors = {
-                click: {
-                    behaviorClass: ClickBehavior
-                }
-            };
-
-            super(options);
-        }
+    App.defaultOptions = {
+        behaviors: [{
+            behaviorClass: RenderBehavior,
+            behaviorOptions: {
+                id: 'render',
+                template: template
+            }
+        }, {
+            behaviorClass: ClickBehavior,
+            behaviorOptions: { id: 'click' }
+        }]
     }
 
     window.app = new App({
@@ -48,5 +50,6 @@ import Behavior from './composer/behavior';
     });
 
     window.app.start();
+    window.app.render();
 
 })(window);
