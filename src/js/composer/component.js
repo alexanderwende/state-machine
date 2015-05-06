@@ -38,13 +38,13 @@ class Component extends EventEmitter {
                     component = new componentClass(componentOptions);
                 }
 
-                this.components[component.id] = component;
+                this._components[component.id] = component;
 
                 break;
 
             case 'string':
 
-                return this.components[component];
+                return this._components[component];
 
             default:
 
@@ -196,7 +196,8 @@ Component.getNextId = function () {
 }
 
 Component.defaultOptions = {
-    events: ['init', 'start', 'render', 'stop', 'destroy']
+    events: ['init', 'start', 'render', 'stop', 'destroy'],
+    extend: function (options) { return utils.extend({}, this, options); }
 };
 
 export default Component;

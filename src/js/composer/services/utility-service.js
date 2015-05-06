@@ -29,7 +29,10 @@ var UtilityService = {
 
             let sources = [];
 
-            for (let i = 1, length = arguments.length; i < length; sources[i - 1] = arguments[i++]);
+            for (let i = 1, length = arguments.length; i < length; i++) {
+
+                sources[i - 1] = arguments[i];
+            }
 
             if (typeof sources[sources.length - 1] === 'boolean') {
 
@@ -40,13 +43,12 @@ var UtilityService = {
                 deep = false;
             }
 
-            source = sources.pop();
+            for (let i = 0, length = sources.length; i < length; i++) {
 
-            // we extend all sources from right to left
-            while (sources.length) {
-
-                source = this.extend(sources.pop(), source, deep);
+                target = this.extend(target, sources[i]);
             }
+
+            return target;
         }
 
         for (let property in source) {

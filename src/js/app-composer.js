@@ -3,6 +3,7 @@ import utils from './composer/services/utility-service';
 import template from './templates/layout.ejs!tpl';
 
 import Component from './composer/component';
+import ViewComponent from './composer/components/view-component';
 import Behavior from './composer/behavior';
 import RenderBehavior from './composer/behaviors/render-behavior';
 import DomBehavior from './composer/behaviors/dom-behavior';
@@ -17,7 +18,9 @@ import DomBehavior from './composer/behaviors/dom-behavior';
     window.utils = utils;
     window.template = template;
 
-    class ClickBehavior extends DomBehavior {
+
+
+    class AppView extends ViewComponent {
 
         _onClick (event) {
 
@@ -27,30 +30,77 @@ import DomBehavior from './composer/behaviors/dom-behavior';
         }
     }
 
-    ClickBehavior.defaultOptions = {
-        domEvents: [{ target: 'li > a', type: 'click', listener: '_onClick' }]
-    };
+    AppView.defaultOptions = ViewComponent.defaultOptions.extend({
+        template: template,
+        domEvents: [{ target: 'a', type: 'click', listener: '_onClick' }]
+    });
 
-    class App extends Component {}
 
-    App.defaultOptions = {
-        behaviors: [{
-            behaviorClass: RenderBehavior,
-            behaviorOptions: {
-                id: 'render',
-                template: template
-            }
-        }, {
-            behaviorClass: ClickBehavior,
-            behaviorOptions: { id: 'click' }
-        }]
+
+//    class Users extends Component {
+//
+//
+//    }
+//
+//    Users.defaultOptions = Component.defaultOptions.extend({
+//        behaviors: [
+//            {
+//                behaviorClass: StateBehavior
+//            }
+//        ],
+//        states: {
+//            list: {
+//                route: '/'
+//            },
+//            details: {
+//                route: '/details/:id'
+//            }
+//        }
+//    });
+
+    class App extends Component {
+
+        onStart () {
+
+            this.view = new AppView({
+                host: this
+            });
+
+            this.view.render();
+        }
+
+        onRender () {
+
+            this.view.render();
+        }
+
+        onStop () {
+
+            this.view.destroy();
+        }
     }
 
     window.app = new App({
-        element: dom.select('#app')
+        element: dom.select('#app'),
+        routes: {
+            'home': {
+                path: '/home',
+                state: 'home'
+            },
+            'users': {
+                path: '/users',
+                state: 'users'
+            },
+            'users.details': {
+                path: '/users/details/:userId',
+                state: 'users.details'
+            }
+        },
+        states: {
+            'home': {}
+        }
     });
 
     window.app.start();
-    window.app.render();
 
 })(window);

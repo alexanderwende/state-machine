@@ -225,7 +225,7 @@ class State extends EventEmitter {
 
         return Promise.resolve(this.onExit(params)).then(function () {
 
-            this.isActive = true;
+            this.isActive = false;
 
         }.bind(this));
     }

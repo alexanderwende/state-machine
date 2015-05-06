@@ -19,11 +19,20 @@ class DomBehavior extends Behavior {
 
             let target = this.dom.select(event.target, this.host.element);
 
-            let listener = (typeof event.listener === 'function') ? event.listener : this[event.listener].bind(this);
+            let listener = (typeof event.listener === 'function') ? event.listener :
+                            typeof this[event.listener] === 'function' ? this[event.listener].bind(this) :
+                            typeof this.host[event.listener] === 'function' ? this.host[event.listener].bind(this) : null;
 
-            this._domEvents[index] = { type: event.type, target: target, listener: listener };
+            if (listener) {
 
-            target.addEventListener(event.type, listener);
+                this._domEvents[index] = { type: event.type, target: target, listener: listener };
+
+                target.addEventListener(event.type, listener);
+            }
+            else {
+
+                throw new TypeError('event listener not defined');
+            }
 
         }, this);
     }

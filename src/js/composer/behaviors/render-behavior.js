@@ -17,7 +17,11 @@ class RenderBehavior extends Behavior {
 
         console.log('renderBehavior.onRender()... ');
 
-        let content = this.renderService.render(this.template, this.data);
+        let template = this.host.getTemplate();
+
+        let data = this.host.getData();
+
+        let content = this.renderService.render(template, data);
 
         this.domService.insert(content, this.host.element);
     }
